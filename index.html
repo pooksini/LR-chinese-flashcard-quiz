@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>중국어 단어 퀴즈</title><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#faf9f6;--line:#e9e7e2;--muted:#85858b;--red:#d96b70;--green:#55a985;--accent:#707ac7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#292a2d;font-family:system-ui,"Noto Sans KR",sans-serif}button,input{font:inherit}button{border:0;border-radius:12px;padding:11px 15px;background:#292a2d;color:white;font-weight:650;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:#efeee9;color:#333}.outline{background:white;color:#333;border:1px solid var(--line)}.hidden{display:none!important}
+.wrap{max-width:1100px;margin:auto;padding:24px 20px 60px}.top{margin-bottom:25px}h1{font-size:clamp(25px,4vw,34px);margin:0 0 5px}h2{font-size:22px;margin:0 0 12px}.sub{font-size:13px;color:var(--muted);line-height:1.5}.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:22px;margin:15px 0}.step{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.1em;margin-bottom:8px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
+input[type=file]{width:100%;padding:16px;border:1px dashed #c9c6bd;border-radius:12px;background:#fbfaf7}.choice{display:flex;gap:8px;flex-wrap:wrap}.choice button{background:#f1f0ec;color:#444}.choice button.active{background:#292a2d;color:white}.field{display:flex;flex-direction:column;gap:9px;margin:18px 0}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.stat{background:#f5f4f0;border-radius:12px;padding:10px 14px;font-size:13px}
+.table-wrap{overflow:auto;max-height:300px;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);min-width:100px;max-width:260px;white-space:pre-wrap;overflow-wrap:anywhere}th{position:sticky;top:0;background:#f5f4f0}
+.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 14px}.head-actions{display:flex;gap:7px;align-items:center;flex-wrap:nowrap}.icon-btn{width:42px;height:42px;padding:0;display:grid;place-items:center;background:white;color:#333;border:1px solid var(--line)}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pause-btn{height:42px;white-space:nowrap}
+.progressline{height:7px;background:#e9e7e1;border-radius:9px;overflow:hidden;margin:10px 0 22px}.progressline>div{height:100%;background:var(--accent);width:0}
+.study-layout{display:grid;grid-template-columns:minmax(150px,1fr) minmax(300px,2.5fr) minmax(150px,1fr);gap:14px}.list-toggle{width:100%;height:46px;border-radius:14px;font-size:13px;margin-bottom:10px}.list-toggle.red{background:#d96b7029;color:#a94f55;border:1px solid #d96b7038}.list-toggle.green{background:#55a98529;color:#347b5d;border:1px solid #55a98538}.word-list{background:white;border:1px solid var(--line);border-radius:15px;padding:10px;max-height:390px;overflow:auto}.word-entry{padding:9px 5px;border-bottom:1px solid #f0efeb}.word-entry:last-child{border:0}.word-entry strong{display:block;font-size:15px}.word-entry span{display:block;font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.card-stack{position:relative;min-height:360px}
+.flashcard{min-height:360px;background:white;border:1.5px solid var(--line);border-radius:24px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 10px 35px #2220;position:relative;z-index:2;touch-action:pan-y;user-select:none;cursor:pointer;transition:transform .96s cubic-bezier(.22,.61,.36,1),opacity .94s ease,background-color .22s ease,border-color .22s ease,box-shadow .22s ease;will-change:transform,opacity}
+.flashcard.next-preview{position:absolute;inset:0;z-index:1;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.04);transition:none}
+.flashcard.swiping,.flashcard.no-transition{transition:none!important}.flashcard.swipe-left{background:#ffe5e6!important;border-color:#d96b70!important;box-shadow:0 16px 42px rgba(217,107,112,.42)!important}.flashcard.swipe-right{background:#e2f6ec!important;border-color:#55a985!important;box-shadow:0 16px 42px rgba(85,169,133,.42)!important}.face-label{font-size:11px;color:#a0a0a0;letter-spacing:.1em;margin-bottom:22px}.mainword{font-size:clamp(29px,5vw,43px);font-weight:760;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}.pinyin{font-size:19px;color:#777;margin-top:14px}.back-list{width:100%;display:grid;gap:12px;text-align:left}.back-item{border-bottom:1px solid #f0eee9;padding-bottom:9px}.back-key{font-size:10px;color:#a0a0a0;margin-bottom:3px}.back-value{font-size:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4}.back-value.chinese{font-size:20px}.video-title{position:absolute;right:17px;bottom:13px;max-width:70%;font-size:10px;color:#9a9aa0;text-align:right;overflow-wrap:anywhere}
+.card-tools{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:14px 0 7px}.card-tools #prevBtn{padding:9px 11px;font-size:13px}.classify{min-width:80px;padding:9px 12px;font-size:13px}.again{background:#fbe9e8;color:#a33}.known{background:#e6f4ed;color:#267451}.swipehint{text-align:center;color:#a0a0a0;font-size:11px;margin-top:10px;line-height:1.5}.result{text-align:center;padding:28px 10px}.percent{font-size:58px;font-weight:800}.listline{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.modal-backdrop{position:fixed;inset:0;background:#17171766;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}.modal{background:white;border-radius:20px;padding:24px;width:min(440px,100%);box-shadow:0 20px 70px #0003}.modal-actions{display:grid;gap:10px;margin-top:20px}.modal-actions button{width:100%}.review-card{min-height:210px;border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer}.review-card .cn{font-size:26px;font-weight:750}.review-card .ko{font-size:17px;color:#666}
+@media(max-width:760px){.wrap{padding:18px 13px 42px}.panel{padding:17px}.study-layout{grid-template-columns:1fr 1fr;gap:9px}.card-column{grid-column:1/-1;grid-row:1}.list-column{grid-row:2}.card-stack,.flashcard{min-height:300px}.flashcard{padding:22px}.word-list{max-height:230px}.head-actions{gap:5px}.icon-btn{width:38px;height:38px}.pause-btn{height:38px;padding:0 10px;font-size:13px}}
+@media(max-width:390px){.head-actions{gap:4px}.icon-btn{width:35px;height:35px}.pause-btn{padding:0 8px;font-size:12px}}
+</style></head><body><div class="wrap">
+<header class="top"><h1>Language Reactor 중국어 단어 퀴즈</h1><div class="sub">Language Reactor에서 저장한 영상 속 단어! 플래시 카드로 공부해요.</div></header>
+<section id="uploadPanel" class="panel"><div class="step">STEP 1 · 엑셀 불러오기</div><h2>Language Reactor - 저장된 항목 - 저장된 단어에서 다운받은 엑셀 파일을 선택해 주세요.</h2><p class="sub">랭귀지 리액터에서 파일 내보내기 시, EXCEL에서 항목 유형 '단어'만 선택해서 내보내주세요!</p><input id="fileInput" type="file" accept=".xlsx,.xls,.csv"><div id="loadMessage" class="sub" style="margin-top:12px"></div></section>
+<section id="dataPanel" class="panel hidden"><div class="row between"><div><div class="step">STEP 2 · 데이터 확인</div><h2 style="margin:0">불러온 단어장</h2></div><button id="changeFile" class="secondary">파일 다시 선택</button></div><div id="dataStats" class="stats"></div><p class="sub">중복 항목도 그대로 유지합니다. 마지막 데이터 행부터 역순으로 표시됩니다.</p><div class="table-wrap"><table><thead><tr><th>원본 행</th><th>단어 (E)</th><th>단어 뜻 (I)</th><th>스크립트 (C)</th><th>번역 (D)</th><th>단어 병음 (M)</th><th>문장 병음 (N)</th><th>Video Title (Q)</th></tr></thead><tbody id="dataRows"></tbody></table></div><div class="row" style="justify-content:flex-end;margin-top:18px"><button id="toSetup">카드 퀴즈 생성하기</button></div></section>
+<section id="setupPanel" class="panel hidden"><div class="step">QUIZ SETTINGS</div><h2>어떤 방식으로 외워볼까요?</h2><div class="field"><label>카드 순서</label><div class="choice" id="orderChoices"><button data-value="ordered" class="active">순서대로</button><button data-value="random">랜덤으로</button></div><div class="sub">순서대로는 엑셀 마지막 데이터 행부터 역순으로 진행합니다.</div></div><div class="field"><label>카드 앞면</label><div class="choice" id="viewChoices"><button data-value="word" class="active">단어 보기</button><button data-value="meaning">뜻 보기</button><button data-value="script">스크립트 보기</button><button data-value="translation">스크립트 번역보기</button></div></div><div class="row between"><span id="setupCount" class="sub"></span><button id="startQuiz">퀴즈 시작하기</button></div></section>
+<section id="quizPanel" class="hidden"><div class="quiz-head"><div><div class="step">FLASHCARDS</div><strong id="counter"></strong></div><div class="head-actions"><button class="icon-btn" id="homeBtn" title="홈으로" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-7h6v7"/></svg></button><button class="icon-btn" id="settingsBtn" title="다음 카드 앞면 설정" aria-label="다음 카드 앞면 설정"><svg viewBox="0 0 24 24"><path d="M20.2 8.2A8.7 8.7 0 0 0 4.7 6.1L3 8"/><path d="M3 3.8V8h4.2"/><path d="M3.8 15.8a8.7 8.7 0 0 0 15.5 2.1L21 16"/><path d="M21 20.2V16h-4.2"/><path d="M9.2 8.5 10 7h4l.8 1.5 1.5.9-.2 1.8.2 1.8-1.5.9-.8 1.5h-4l-.8-1.5-1.5-.9.2-1.8-.2-1.8z"/><circle cx="12" cy="11.2" r="1.8"/></svg></button><button class="pause-btn" id="pauseBtn">일시정지</button></div></div><div class="progressline"><div id="progressBar"></div></div>
+<div class="study-layout"><aside class="list-column"><button id="againListToggle" class="list-toggle red">재학습 단어목록 <span id="againListNum">0</span></button><div id="againList" class="word-list hidden"></div></aside>
+<div class="card-column"><div class="card-stack"><div id="nextFlashcard" class="flashcard next-preview hidden" aria-hidden="true"><div id="nextCardContent"></div></div><div id="flashcard" class="flashcard" role="button" tabindex="0"><div id="cardContent"></div></div></div><div id="frontTools" class="card-tools"></div><div class="card-tools"><button id="prevBtn" class="outline">☜ 이전 단어(A)</button><button id="againBtn" class="classify again">← 재학습</button><button id="knownBtn" class="classify known">아는 단어 →</button></div><div id="swipeHint" class="swipehint">카드를 클릭하거나 스페이스 바를 누르면 앞·뒷면이 바뀝니다.<br>좌우 방향키로 단어를 분류할 수 있어요.</div></div>
+<aside class="list-column"><button id="knownListToggle" class="list-toggle green">아는 단어목록 <span id="knownListNum">0</span></button><div id="knownList" class="word-list hidden"></div></aside></div></section>
+<section id="resultPanel" class="panel hidden"><div class="result"><div class="step">SESSION COMPLETE</div><h2>오늘의 학습 결과</h2><div id="resultPercent" class="percent">0%</div><div id="resultCount" class="sub"></div></div><div class="listline"><span>아는 단어</span><strong id="knownCount"></strong></div><div class="listline"><span>재학습할 단어</span><strong id="againCount"></strong></div><div class="row" style="justify-content:center;margin-top:22px"><button id="reviewBtn">재학습하기</button><button id="restartBtn" class="secondary">전체 다시 풀기</button></div></section></div>
+<div id="faceSettingsModal" class="modal-backdrop hidden"><div class="modal"><div class="step">NEXT CARD SETTINGS</div><h2>다음 카드 앞면 설정</h2><p class="sub">이미 넘긴 카드는 그대로 두고, 현재 카드부터 새 앞면 설정을 적용합니다.</p><div class="choice" id="nextViewChoices" style="margin-top:16px"><button data-value="word">단어 보기</button><button data-value="meaning">뜻 보기</button><button data-value="script">스크립트 보기</button><button data-value="translation">스크립트 번역보기</button></div><div class="modal-actions"><button id="applyNextView">적용하기</button><button id="cancelNextView" class="secondary">취소</button></div></div></div>
+<div id="pauseModal" class="modal-backdrop hidden"><div class="modal"><div class="step">PAUSED</div><h2>잠시 쉬어갈까요?</h2><p class="sub">지금까지 쌓인 재학습 카드 <b id="pausedAgainCount">0</b>개를 다시 볼 수 있어요.</p><div class="modal-actions"><button id="pauseReviewBtn" class="again">재학습</button><button id="continueBtn">계속하기</button><button id="closePauseBtn" class="secondary">닫기</button></div></div></div>
+<div id="reviewModal" class="modal-backdrop hidden"><div class="modal"><div class="row between"><div><div class="step">QUICK REVIEW</div><h2 style="margin:0">재학습 카드</h2></div><button id="exitReviewBtn" class="secondary">닫기</button></div><p id="reviewCounter" class="sub"></p><div id="reviewCard" class="review-card"></div><div class="row between" style="margin-top:14px"><button id="reviewPrev" class="secondary">이전</button><button id="reviewNext">다음</button></div></div></div>
+<script>
+(()=>{const $=id=>document.getElementById(id),panels=['uploadPanel','dataPanel','setupPanel','quizPanel','resultPanel'],show=id=>panels.forEach(p=>$(p).classList.toggle('hidden',p!==id));
+let rows=[],order='ordered',view='word',deck=[],index=0,isBack=false,paused=false,known=[],again=[],history=[],setupTarget='all',reviewItems=[],reviewIndex=0,reviewBack=false,animating=false;
+const labels={word:'단어',meaning:'단어 뜻',script:'스크립트',translation:'스크립트 번역',wordPinyin:'단어 병음',phrasePinyin:'스크립트 병음'};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isMobileView=()=>window.matchMedia('(max-width: 760px)').matches;
+function syncButtonLabels(){
+  const mobile=isMobileView();
+  const prev=$('prevBtn');
+  if(prev)prev.textContent=mobile?'☜ 이전 단어':'☜ 이전 단어(A)';
+  const listen=$('listenBtn');
+  if(listen)listen.textContent=mobile?'듣기':'듣기(Q)';
+  const pinyin=$('pinyinBtn');
+  if(pinyin)pinyin.textContent=mobile?'병음 보기':'병음 보기(W)';
+  const hint=$('swipeHint');
+  if(hint)hint.innerHTML=mobile
+    ?'카드를 터치하면 앞·뒷면이 바뀝니다.<br>좌우로 스와이프 해 단어를 분류할 수 있어요.'
+    :'카드를 클릭하거나 스페이스 바를 누르면 앞·뒷면이 바뀝니다.<br>좌우 방향키로 단어를 분류할 수 있어요.';
+}
+window.addEventListener('resize',syncButtonLabels);
+function normalize(data){const out=[];for(let i=1;i<data.length;i++){const r=data[i]||[],v={sourceRow:i+1,script:r[2]??'',translation:r[3]??'',word:r[4]??'',meaning:r[8]??'',wordPinyin:r[12]??'',phrasePinyin:r[13]??'',videoTitle:r[16]??''};if(Object.keys(v).some(k=>k!=='sourceRow'&&String(v[k]).trim()))out.push(v)}return out.reverse()}
+$('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('loadMessage').textContent='파일을 읽는 중입니다…';try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets['Saved Items']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});rows=normalize(raw);if(!rows.length)throw Error('가져올 데이터가 없습니다. C/D/E/I/M/N/Q열을 확인해 주세요.');$('dataStats').innerHTML=`<div class="stat"><b>${rows.length}</b>개 항목</div><div class="stat">시트: <b>${esc(wb.Sheets['Saved Items']?'Saved Items':wb.SheetNames[0])}</b></div><div class="stat">중복 항목 포함</div>`;$('dataRows').innerHTML=rows.map(r=>`<tr><td>${r.sourceRow}</td><td>${esc(r.word)}</td><td>${esc(r.meaning)}</td><td>${esc(r.script)}</td><td>${esc(r.translation)}</td><td>${esc(r.wordPinyin)}</td><td>${esc(r.phrasePinyin)}</td><td>${esc(r.videoTitle)}</td></tr>`).join('');$('setupCount').textContent=`총 ${rows.length}개 카드`;$('loadMessage').textContent='';show('dataPanel')}catch(err){$('loadMessage').textContent='불러오지 못했어요: '+err.message}};
+$('changeFile').onclick=()=>{show('uploadPanel');$('fileInput').value=''};$('toSetup').onclick=()=>openSetup('all');
+function choices(id,fn){$(id).onclick=e=>{const b=e.target.closest('button[data-value]');if(!b)return;$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));fn(b.dataset.value)}}choices('orderChoices',v=>order=v);choices('viewChoices',v=>view=v);
+function openSetup(target){setupTarget=target;$('setupCount').textContent=`${target==='again'?again.length:rows.length}개 카드로 시작합니다.`;show('setupPanel')}
+$('startQuiz').onclick=()=>start(setupTarget==='again'?again:rows);
+function start(source){deck=source.slice();if(order==='random')deck.sort(()=>Math.random()-.5);index=0;isBack=false;paused=false;animating=false;known=[];again=[];history=[];if(!deck.length){alert('학습할 카드가 없습니다.');return}show('quizPanel');render()}
+function backFields(){return({word:['meaning','wordPinyin','script','translation','phrasePinyin'],meaning:['word','wordPinyin','script','translation','phrasePinyin'],script:['translation','phrasePinyin','word','meaning','wordPinyin'],translation:['script','phrasePinyin','word','meaning','wordPinyin']})[view]}
+function renderLists(){$('againListNum').textContent=again.length;$('knownListNum').textContent=known.length;$('againList').innerHTML=again.map(r=>`<div class="word-entry"><strong>${esc(r.word||'—')}</strong><span>${esc(r.meaning||'—')}</span></div>`).join('')||'<div class="sub">아직 재학습 카드가 없어요.</div>';$('knownList').innerHTML=known.map(r=>`<div class="word-entry"><strong>${esc(r.word||'—')}</strong><span>${esc(r.meaning||'—')}</span></div>`).join('')||'<div class="sub">아직 아는 단어가 없어요.</div>'}
+function updateNextPreview(){
+  const nextEl=$('nextFlashcard');
+  const nextContent=$('nextCardContent');
+  if(!nextEl||!nextContent)return;
+  if(index+1<deck.length){
+    const nr=deck[index+1];
+    const key={word:'word',meaning:'meaning',script:'script',translation:'translation'}[view];
+    nextContent.innerHTML=`<div class="mainword">${esc(nr[key]||'—')}</div>`;
+    nextEl.classList.remove('hidden');
+  }else{
+    nextEl.classList.add('hidden');
+  }
+}
+function render(instantReset=false){
+  resetSwipeVisual(instantReset);
+  if(index>=deck.length){$('nextFlashcard').classList.add('hidden');finish();return}
+  const r=deck[index];$('counter').textContent=`${index+1} / ${deck.length}`;$('progressBar').style.width=`${index/deck.length*100}%`;$('frontTools').innerHTML='';
+  if(!isBack){const key={word:'word',meaning:'meaning',script:'script',translation:'translation'}[view];$('cardContent').innerHTML=`<div class="mainword">${esc(r[key]||'—')}</div>`;if(view==='word'||view==='script'){$('frontTools').innerHTML='<button id="listenBtn" class="secondary">듣기(Q)</button><button id="pinyinBtn" class="outline">병음 보기(W)</button>';$('listenBtn').onclick=e=>{e.stopPropagation();speak(view==='word'?r.word:r.script)};$('pinyinBtn').onclick=e=>{e.stopPropagation();let el=$('pinyinReveal');if(el){el.remove();return}el=document.createElement('div');el.id='pinyinReveal';el.className='pinyin';el.textContent=(view==='word'?r.wordPinyin:r.phrasePinyin)||'병음 정보 없음';$('cardContent').append(el)}}}
+  else{$('cardContent').innerHTML=`<div class="back-list">${backFields().map(k=>`<div class="back-item"><div class="back-key">${labels[k]}</div><div class="back-value ${['word','script'].includes(k)?'chinese':''}">${esc(r[k]||'—')}</div></div>`).join('')}</div><div class="video-title">${esc(r.videoTitle||'')}</div>`}
+  $('prevBtn').disabled=history.length===0;$('pauseBtn').disabled=false;syncButtonLabels();updateNextPreview();renderLists()
+}
+function speak(t){if(!t)return;if(!('speechSynthesis'in window)){alert('이 브라우저에서는 음성 재생을 지원하지 않습니다.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=.82;speechSynthesis.speak(u)}
+function flip(){if(paused||animating||!$('pauseModal').classList.contains('hidden'))return;isBack=!isBack;render(true)}
+$('flashcard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}}
+window.addEventListener('keydown',e=>{
+  if($('quizPanel').classList.contains('hidden'))return;
+  if(paused||animating)return;
+  if(!$('pauseModal').classList.contains('hidden')||!$('reviewModal').classList.contains('hidden')||!$('faceSettingsModal').classList.contains('hidden'))return;
+  const tag=(e.target&&e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select')return;
+  const k=(e.key||'').toLowerCase();
+  const code=e.code||'';
+  if(e.key===' '||code==='Space'){
+    e.preventDefault();
+    flip();
+  }else if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    animateAndClassify('again');
+  }else if(e.key==='ArrowRight'){
+    e.preventDefault();
+    animateAndClassify('known');
+  }else if(!isMobileView()&&(code==='KeyQ'||k==='q'||e.key==='ㅂ'||e.key==='ㅃ')){
+    const btn=$('listenBtn');
+    if(btn){e.preventDefault();btn.click();}
+  }else if(!isMobileView()&&(code==='KeyW'||k==='w'||e.key==='ㅈ'||e.key==='ㅉ')){
+    const btn=$('pinyinBtn');
+    if(btn){e.preventDefault();btn.click();}
+  }else if(!isMobileView()&&(code==='KeyA'||k==='a'||e.key==='ㅁ')){
+    const btn=$('prevBtn');
+    if(btn&&!btn.disabled){e.preventDefault();btn.click();}
+  }
+},true);
+function classify(type,instantReset=false){if(paused||animating)return;const item=deck[index];history.push({item,type,index});(type==='known'?known:again).push(item);index++;isBack=false;render(instantReset)}
+function animateAndClassify(type){
+  if(paused||animating)return;
+  animating=true;
+  updateNextPreview();
+  const fc=$('flashcard');
+  const dir=type==='known'?1:-1;
+  fc.classList.remove('swiping','no-transition');
+  fc.classList.toggle('swipe-left',dir<0);
+  fc.classList.toggle('swipe-right',dir>0);
+  void fc.offsetWidth;
+  requestAnimationFrame(()=>{
+    fc.style.transform=`translateX(${dir*135}%) rotate(${dir*180}deg)`;
+    fc.style.opacity='0';
+  });
+  setTimeout(()=>{
+    animating=false;
+    classify(type,true);
+  },936);
+}
+$('againBtn').onclick=()=>animateAndClassify('again');$('knownBtn').onclick=()=>animateAndClassify('known');
+$('prevBtn').onclick=()=>{if(!history.length||animating)return;const h=history.pop(),arr=h.type==='known'?known:again,p=arr.lastIndexOf(h.item);if(p>=0)arr.splice(p,1);index=h.index;isBack=false;render(true)};
+$('homeBtn').onclick=()=>{if(!window.confirm('정말로 홈 화면으로 돌아가시겠습니까?'))return;rows=[];deck=[];index=0;isBack=false;paused=false;animating=false;known=[];again=[];history=[];order='ordered';view='word';setupTarget='all';reviewItems=[];reviewIndex=0;reviewBack=false;$('fileInput').value='';$('loadMessage').textContent='';$('dataRows').innerHTML='';$('dataStats').innerHTML='';$('orderChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value==='ordered'));$('viewChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value==='word'));$('againList').classList.add('hidden');$('knownList').classList.add('hidden');$('pauseModal').classList.add('hidden');$('reviewModal').classList.add('hidden');$('faceSettingsModal').classList.add('hidden');show('uploadPanel')};
+$('settingsBtn').onclick=()=>{if(paused)return;$('nextViewChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value===view));$('faceSettingsModal').classList.remove('hidden')};
+$('nextViewChoices').onclick=e=>{const b=e.target.closest('button[data-value]');if(!b)return;$('nextViewChoices').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b))};
+$('applyNextView').onclick=()=>{const selected=$('nextViewChoices').querySelector('button.active');if(selected){view=selected.dataset.value;isBack=false;$('faceSettingsModal').classList.add('hidden');render(true)}};
+$('cancelNextView').onclick=()=> $('faceSettingsModal').classList.add('hidden');
+$('pauseBtn').onclick=()=>{paused=true;$('pausedAgainCount').textContent=again.length;$('pauseModal').classList.remove('hidden')};
+$('continueBtn').onclick=$('closePauseBtn').onclick=()=>{$('pauseModal').classList.add('hidden');paused=false};
+$('pauseReviewBtn').onclick=()=>{if(!again.length){alert('아직 재학습 카드가 없습니다.');return}reviewItems=again.slice();reviewIndex=0;reviewBack=false;$('pauseModal').classList.add('hidden');renderReview();$('reviewModal').classList.remove('hidden')};
+$('exitReviewBtn').onclick=()=>{$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')};
+$('reviewCard').onclick=()=>{reviewBack=!reviewBack;renderReview()};$('reviewPrev').onclick=()=>{reviewIndex=Math.max(0,reviewIndex-1);reviewBack=false;renderReview()};
+$('reviewNext').onclick=()=>{if(reviewIndex<reviewItems.length-1){reviewIndex++;reviewBack=false;renderReview()}else{$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')}};
+function renderReview(){const r=reviewItems[reviewIndex];$('reviewCounter').textContent=`${reviewIndex+1} / ${reviewItems.length} · 카드를 누르면 뜻이 바뀝니다.`;$('reviewCard').innerHTML=reviewBack?`<div class="ko">${esc(r.meaning||'—')}</div><div class="cn" style="font-size:19px;color:#777">${esc(r.word||'—')}</div>`:`<div class="cn">${esc(r.word||'—')}</div><div class="sub">카드를 눌러 뜻 보기</div>`;$('reviewPrev').disabled=reviewIndex===0;$('reviewNext').textContent=reviewIndex===reviewItems.length-1?'완료':'다음'}
+$('againListToggle').onclick=()=>$('againList').classList.toggle('hidden');$('knownListToggle').onclick=()=>$('knownList').classList.toggle('hidden');
+
+let sx=0,sy=0,swiping=false,moved=false;
+function resetSwipeVisual(instant=false){
+  swiping=false;
+  const fc=$('flashcard');
+  if(!fc)return;
+  if(instant)fc.classList.add('no-transition');
+  fc.classList.remove('swiping','swipe-left','swipe-right');
+  fc.style.transform='';
+  fc.style.opacity='';
+  if(instant){
+    void fc.offsetWidth;
+    fc.classList.remove('no-transition');
+  }
+}
+$('flashcard').onclick=e=>{
+  if(moved){moved=false;return;}
+  flip();
+};
+$('flashcard').ontouchstart=e=>{
+  if(paused||animating)return;
+  sx=e.changedTouches[0].clientX;
+  sy=e.changedTouches[0].clientY;
+  swiping=true;
+  moved=false;
+  $('flashcard').classList.add('swiping');
+};
+$('flashcard').ontouchmove=e=>{
+  if(!swiping||paused||animating)return;
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)){
+    moved=true;
+    const fc=$('flashcard');
+    const ratio=Math.max(-1,Math.min(1,dx/110));
+    fc.style.transform=`translateX(${dx*0.85}px) rotate(${ratio*32}deg)`;
+    fc.classList.toggle('swipe-left',dx<0);
+    fc.classList.toggle('swipe-right',dx>0);
+  }
+};
+$('flashcard').ontouchend=e=>{
+  if(!swiping)return;
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  const shouldClassify=Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy)*1.1&&!paused&&!animating;
+  swiping=false;
+  if(shouldClassify){
+    animateAndClassify(dx<0?'again':'known');
+  }else{
+    resetSwipeVisual(false);
+  }
+  setTimeout(()=>{moved=false},50);
+};
+$('flashcard').ontouchcancel=()=>{resetSwipeVisual(false);moved=false;};
+
+function finish(){show('resultPanel');const total=known.length+again.length;$('resultPercent').textContent=(total?known.length/total*100:0).toFixed(1)+'%';$('resultCount').textContent=`${known.length} / ${total}개를 아는 단어로 분류했어요.`;$('knownCount').textContent=known.length+'개';$('againCount').textContent=again.length+'개';$('reviewBtn').disabled=!again.length}
+$('reviewBtn').onclick=()=>openSetup('again');$('restartBtn').onclick=()=>openSetup('all');syncButtonLabels();show('uploadPanel');
+})();
+</script></body></html>
