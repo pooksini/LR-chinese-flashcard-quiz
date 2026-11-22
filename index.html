@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Language Reactor 중국어 단어 퀴즈</title><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<title>Language Reactor 중국어 단어 퀴즈</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Language Reactor 중국어 단어 퀴즈">
+<meta property="og:description" content="Language Reactor에서 저장한 영상 속 단어! 플래시 카드로 공부해요.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Language Reactor 중국어 단어 퀴즈">
+<meta name="twitter:description" content="Language Reactor에서 저장한 영상 속 단어! 플래시 카드로 공부해요.">
+<meta name="application-name" content="Language Reactor 중국어 단어 퀴즈">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{--bg:#faf9f6;--line:#e9e7e2;--muted:#85858b;--red:#d96b70;--green:#55a985;--accent:#707ac7}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#292a2d;font-family:system-ui,"Noto Sans KR",sans-serif}button,input{font:inherit}button{border:0;border-radius:12px;padding:11px 15px;background:#292a2d;color:white;font-weight:650;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:#efeee9;color:#333}.outline{background:white;color:#333;border:1px solid var(--line)}.hidden{display:none!important}
@@ -9,7 +17,7 @@ input[type=file]{width:100%;padding:16px;border:1px dashed #c9c6bd;border-radius
 .table-wrap{overflow:auto;max-height:300px;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);min-width:100px;max-width:260px;white-space:pre-wrap;overflow-wrap:anywhere}th{position:sticky;top:0;background:#f5f4f0}
 .quiz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 14px}.head-actions{display:flex;gap:7px;align-items:center;flex-wrap:nowrap}.icon-btn{width:42px;height:42px;padding:0;display:grid;place-items:center;background:white;color:#333;border:1px solid var(--line)}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pause-btn{height:42px;white-space:nowrap}
 .progressline{height:7px;background:#e9e7e1;border-radius:9px;overflow:hidden;margin:10px 0 22px}.progressline>div{height:100%;background:var(--accent);width:0}
-.study-layout{display:grid;grid-template-columns:minmax(150px,1fr) minmax(300px,2.5fr) minmax(150px,1fr);gap:14px}.list-toggle{width:100%;height:46px;border-radius:14px;font-size:13px;margin-bottom:10px}.list-toggle.red{background:#d96b7029;color:#a94f55;border:1px solid #d96b7038}.list-toggle.green{background:#55a98529;color:#347b5d;border:1px solid #55a98538}.word-list{background:white;border:1px solid var(--line);border-radius:15px;padding:10px;max-height:390px;overflow:auto}.word-entry{padding:9px 5px;border-bottom:1px solid #f0efeb}.word-entry:last-child{border:0}.word-entry strong{display:block;font-size:15px}.word-entry span{display:block;font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.study-layout{display:grid;grid-template-columns:minmax(150px,1fr) minmax(300px,2.5fr) minmax(150px,1fr);gap:14px}.list-toggle{width:100%;height:46px;border-radius:14px;font-size:13px;margin-bottom:10px}.list-toggle.red{background:#d96b7029;color:#a94f55;border:1px solid #d96b7038}.list-toggle.green{background:#55a98529;color:#347b5d;border:1px solid #55a98538}.word-list{background:white;border:1px solid var(--line);border-radius:15px;padding:10px;max-height:390px;overflow:auto}.word-entry{padding:9px 5px;border-bottom:1px solid #f0efeb}.word-entry:last-child{border:0}.word-entry strong{font-size:15px;font-weight:700}.word-entry .wp{display:inline;font-size:11px;font-weight:400;color:#9a9aa0;margin-left:6px}.word-entry .mn{display:block;font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
 .card-stack{position:relative;min-height:420px}
 .flashcard{min-height:420px;background:white;border:1.5px solid var(--line);border-radius:24px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 10px 35px #2220;position:relative;z-index:2;touch-action:pan-y;user-select:none;cursor:pointer;transition:transform .96s cubic-bezier(.22,.61,.36,1),opacity .94s ease,background-color .22s ease,border-color .22s ease,box-shadow .22s ease;will-change:transform,opacity}
 .flashcard.next-preview{position:absolute;inset:0;z-index:1;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.04);transition:none}
@@ -29,8 +37,8 @@ input[type=file]{width:100%;padding:16px;border:1px dashed #c9c6bd;border-radius
 <aside class="list-column"><button id="knownListToggle" class="list-toggle green">아는 단어목록 <span id="knownListNum">0</span></button><div id="knownList" class="word-list hidden"></div></aside></div></section>
 <section id="resultPanel" class="panel hidden"><div class="result"><div class="step">SESSION COMPLETE</div><h2>오늘의 학습 결과</h2><div id="resultPercent" class="percent">0%</div><div id="resultCount" class="sub"></div></div><div class="listline"><span>아는 단어</span><strong id="knownCount"></strong></div><div class="listline"><span>재학습할 단어</span><strong id="againCount"></strong></div><div class="row" style="justify-content:center;margin-top:22px"><button id="reviewBtn">재학습하기</button><button id="restartBtn" class="secondary">전체 다시 풀기</button></div></section></div>
 <div id="faceSettingsModal" class="modal-backdrop hidden"><div class="modal"><div class="step">NEXT CARD SETTINGS</div><h2>다음 카드 앞면 설정</h2><p class="sub">이미 넘긴 카드는 그대로 두고, 현재 카드부터 새 앞면 설정을 적용합니다.</p><div class="choice" id="nextViewChoices" style="margin-top:16px"><button data-value="word">단어 보기</button><button data-value="meaning">뜻 보기</button><button data-value="script">스크립트 보기</button><button data-value="translation">스크립트 번역보기</button></div><div class="modal-actions"><button id="applyNextView">적용하기</button><button id="cancelNextView" class="secondary">취소</button></div></div></div>
-<div id="pauseModal" class="modal-backdrop hidden"><div class="modal"><div class="step">PAUSED</div><h2>잠시 쉬어갈까요?</h2><p class="sub">지금까지 쌓인 재학습 카드 <b id="pausedAgainCount">0</b>개를 다시 볼 수 있어요.</p><div class="modal-actions"><button id="pauseReviewBtn" class="again">재학습</button><button id="continueBtn">계속하기</button><button id="closePauseBtn" class="secondary">닫기</button></div></div></div>
-<div id="reviewModal" class="modal-backdrop hidden"><div class="modal"><div class="row between"><div><div class="step">QUICK REVIEW</div><h2 style="margin:0">재학습 카드</h2></div><button id="exitReviewBtn" class="secondary">닫기</button></div><p id="reviewCounter" class="sub"></p><div id="reviewCard" class="review-card"></div><div class="row between" style="margin-top:14px"><button id="reviewPrev" class="secondary">이전</button><button id="reviewNext">다음</button></div></div></div>
+<div id="pauseModal" class="modal-backdrop hidden"><div class="modal"><div class="step">PAUSED</div><h2>잠시 쉬어갈까요?</h2><p class="sub">지금까지 쌓인 재학습 카드 <b id="pausedAgainCount">0</b>개 중 최대 5개를 랜덤으로 다시 볼 수 있어요.</p><div class="modal-actions"><button id="pauseReviewBtn" class="again">5개 랜덤 재학습</button><button id="continueBtn">계속하기</button><button id="closePauseBtn" class="secondary">닫기</button></div></div></div>
+<div id="reviewModal" class="modal-backdrop hidden"><div class="modal"><div class="row between"><div><div class="step">QUICK REVIEW</div><h2 style="margin:0">재학습 카드</h2></div><button id="exitReviewBtn" class="secondary">닫기</button></div><p id="reviewCounter" class="sub"></p><div id="reviewCard" class="review-card"></div><div class="row between" style="margin-top:14px"><button id="reviewPrev" class="secondary">이전</button><button id="reviewNext">다음</button></div><p class="sub" style="text-align:center;margin:12px 0 0">스페이스 바: 앞·뒷면 · ← 이전 · → 다음</p></div></div>
 <script>
 (()=>{const $=id=>document.getElementById(id),panels=['uploadPanel','dataPanel','setupPanel','quizPanel','resultPanel'],show=id=>panels.forEach(p=>$(p).classList.toggle('hidden',p!==id));
 let rows=[],order='ordered',view='word',deck=[],index=0,isBack=false,paused=false,known=[],again=[],history=[],setupTarget='all',reviewItems=[],reviewIndex=0,reviewBack=false,animating=false;
@@ -59,7 +67,8 @@ function openSetup(target){setupTarget=target;$('setupCount').textContent=`${tar
 $('startQuiz').onclick=()=>start(setupTarget==='again'?again:rows);
 function start(source){deck=source.slice();if(order==='random')deck.sort(()=>Math.random()-.5);index=0;isBack=false;paused=false;animating=false;known=[];again=[];history=[];if(!deck.length){alert('학습할 카드가 없습니다.');return}show('quizPanel');render()}
 function backFields(){return({word:['meaning','wordPinyin','script','translation','phrasePinyin'],meaning:['word','wordPinyin','script','translation','phrasePinyin'],script:['translation','phrasePinyin','word','meaning','wordPinyin'],translation:['script','phrasePinyin','word','meaning','wordPinyin']})[view]}
-function renderLists(){$('againListNum').textContent=again.length;$('knownListNum').textContent=known.length;$('againList').innerHTML=again.map(r=>`<div class="word-entry"><strong>${esc(r.word||'—')}</strong><span>${esc(r.meaning||'—')}</span></div>`).join('')||'<div class="sub">아직 재학습 카드가 없어요.</div>';$('knownList').innerHTML=known.map(r=>`<div class="word-entry"><strong>${esc(r.word||'—')}</strong><span>${esc(r.meaning||'—')}</span></div>`).join('')||'<div class="sub">아직 아는 단어가 없어요.</div>'}
+function entryHtml(r){return `<div class="word-entry"><strong>${esc(r.word||'—')}</strong>${r.wordPinyin?`<span class="wp">${esc(r.wordPinyin)}</span>`:''}<span class="mn">${esc(r.meaning||'—')}</span></div>`}
+function renderLists(){$('againListNum').textContent=again.length;$('knownListNum').textContent=known.length;$('againList').innerHTML=again.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 재학습 카드가 없어요.</div>';$('knownList').innerHTML=known.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 아는 단어가 없어요.</div>'}
 function updateNextPreview(){
   const nextEl=$('nextFlashcard');
   const nextContent=$('nextCardContent');
@@ -112,6 +121,12 @@ window.addEventListener('keydown',e=>{
     if(btn&&!btn.disabled){e.preventDefault();btn.click();}
   }
 },true);
+window.addEventListener('keydown',e=>{
+  if($('reviewModal').classList.contains('hidden'))return;
+  if(e.key===' '||e.code==='Space'){e.preventDefault();e.stopPropagation();reviewBack=!reviewBack;renderReview()}
+  else if(e.key==='ArrowLeft'){e.preventDefault();e.stopPropagation();$('reviewPrev').click()}
+  else if(e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();$('reviewNext').click()}
+},true);
 function classify(type,instantReset=false){if(paused||animating)return;const item=deck[index];history.push({item,type,index});(type==='known'?known:again).push(item);index++;isBack=false;render(instantReset)}
 function animateAndClassify(type){
   if(paused||animating)return;
@@ -141,11 +156,11 @@ $('applyNextView').onclick=()=>{const selected=$('nextViewChoices').querySelecto
 $('cancelNextView').onclick=()=> $('faceSettingsModal').classList.add('hidden');
 $('pauseBtn').onclick=()=>{paused=true;$('pausedAgainCount').textContent=again.length;$('pauseModal').classList.remove('hidden')};
 $('continueBtn').onclick=$('closePauseBtn').onclick=()=>{$('pauseModal').classList.add('hidden');paused=false};
-$('pauseReviewBtn').onclick=()=>{if(!again.length){alert('아직 재학습 카드가 없습니다.');return}reviewItems=again.slice();reviewIndex=0;reviewBack=false;$('pauseModal').classList.add('hidden');renderReview();$('reviewModal').classList.remove('hidden')};
-$('exitReviewBtn').onclick=()=>{$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')};
+$('pauseReviewBtn').onclick=()=>{if(!again.length){alert('아직 재학습 카드가 없습니다.');return}const pool=again.slice();for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}reviewItems=pool.slice(0,5);reviewIndex=0;reviewBack=false;if(document.activeElement)document.activeElement.blur();$('pauseModal').classList.add('hidden');renderReview();$('reviewModal').classList.remove('hidden')};
+$('exitReviewBtn').onclick=()=>{if(document.activeElement)document.activeElement.blur();$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')};
 $('reviewCard').onclick=()=>{reviewBack=!reviewBack;renderReview()};$('reviewPrev').onclick=()=>{reviewIndex=Math.max(0,reviewIndex-1);reviewBack=false;renderReview()};
-$('reviewNext').onclick=()=>{if(reviewIndex<reviewItems.length-1){reviewIndex++;reviewBack=false;renderReview()}else{$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')}};
-function renderReview(){const r=reviewItems[reviewIndex];$('reviewCounter').textContent=`${reviewIndex+1} / ${reviewItems.length} · 카드를 누르면 뜻이 바뀝니다.`;$('reviewCard').innerHTML=reviewBack?`<div class="ko">${esc(r.meaning||'—')}</div><div class="cn" style="font-size:19px;color:#777">${esc(r.word||'—')}</div>`:`<div class="cn">${esc(r.word||'—')}</div><div class="sub">카드를 눌러 뜻 보기</div>`;$('reviewPrev').disabled=reviewIndex===0;$('reviewNext').textContent=reviewIndex===reviewItems.length-1?'완료':'다음'}
+$('reviewNext').onclick=()=>{if(reviewIndex<reviewItems.length-1){reviewIndex++;reviewBack=false;renderReview()}else{if(document.activeElement)document.activeElement.blur();$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')}};
+function renderReview(){const r=reviewItems[reviewIndex];$('reviewCounter').textContent=`${reviewIndex+1} / ${reviewItems.length} · 카드를 누르거나 스페이스 바를 누르면 뒷면이 보여요.`;$('reviewCard').innerHTML=reviewBack?`<div class="ko">${esc(r.meaning||'—')}</div><div class="cn" style="font-size:19px;color:#777;font-weight:500">${esc(r.wordPinyin||'병음 정보 없음')}</div>`:`<div class="cn">${esc(r.word||'—')}</div><div class="sub">카드를 눌러 뜻 보기</div>`;$('reviewPrev').disabled=reviewIndex===0;$('reviewNext').textContent=reviewIndex===reviewItems.length-1?'완료':'다음'}
 $('againListToggle').onclick=()=>$('againList').classList.toggle('hidden');$('knownListToggle').onclick=()=>$('knownList').classList.toggle('hidden');
 
 let sx=0,sy=0,swiping=false,moved=false;
