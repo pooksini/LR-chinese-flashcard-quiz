@@ -12,39 +12,223 @@
 <style>
 :root{--bg:#faf9f6;--line:#e9e7e2;--muted:#85858b;--red:#d96b70;--green:#55a985;--accent:#707ac7}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#292a2d;font-family:system-ui,"Noto Sans KR",sans-serif}button,input{font:inherit}button{border:0;border-radius:12px;padding:11px 15px;background:#292a2d;color:white;font-weight:650;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:#efeee9;color:#333}.outline{background:white;color:#333;border:1px solid var(--line)}.hidden{display:none!important}
-.wrap{max-width:1100px;margin:auto;padding:24px 20px 60px}.top{margin-bottom:25px}h1{font-size:clamp(22px,4vw,34px);margin:0 0 5px}h2{font-size:22px;margin:0 0 12px}.sub{font-size:11px;color:var(--muted);line-height:1.5}.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:22px;margin:15px 0}.step{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.1em;margin-bottom:8px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
+.wrap{max-width:1100px;margin:auto;padding:24px 20px 60px}.top{margin-bottom:25px}.headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}h1{font-size:clamp(20px,4vw,32px);margin:0 0 5px}h2{font-size:22px;margin:0 0 12px}.sub{font-size:11px;color:var(--muted);line-height:1.5}.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:22px;margin:15px 0}.step{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.1em;margin-bottom:8px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
 input[type=file]{width:100%;padding:16px;border:1px dashed #c9c6bd;border-radius:12px;background:#fbfaf7}.choice{display:flex;gap:8px;flex-wrap:wrap}.choice button{background:#f1f0ec;color:#444}.choice button.active{background:#292a2d;color:white}.field{display:flex;flex-direction:column;gap:9px;margin:18px 0}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.stat{background:#f5f4f0;border-radius:12px;padding:10px 14px;font-size:13px}
 .table-wrap{overflow:auto;max-height:300px;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);min-width:100px;max-width:260px;white-space:pre-wrap;overflow-wrap:anywhere}th{position:sticky;top:0;background:#f5f4f0}
-.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 14px}.head-actions{display:flex;gap:7px;align-items:center;flex-wrap:nowrap}.icon-btn{width:42px;height:42px;padding:0;display:grid;place-items:center;background:white;color:#333;border:1px solid var(--line)}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pause-btn{height:42px;white-space:nowrap}
+.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 14px}.head-actions{display:flex;gap:7px;align-items:center;flex-wrap:nowrap}.icon-btn{width:42px;height:42px;padding:0;display:grid;place-items:center;background:white;color:#333;border:1px solid var(--line);flex-shrink:0}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pause-btn{width:42px;height:42px;padding:0;display:grid;place-items:center;background:#292a2d;color:#fff;border:1px solid #292a2d;border-radius:12px}.pause-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .progressline{height:7px;background:#e9e7e1;border-radius:9px;overflow:hidden;margin:10px 0 22px}.progressline>div{height:100%;background:var(--accent);width:0}
-.study-layout{display:grid;grid-template-columns:minmax(150px,1fr) minmax(300px,2.5fr) minmax(150px,1fr);gap:14px}.list-toggle{width:100%;height:46px;border-radius:14px;font-size:13px;margin-bottom:10px}.list-toggle.red{background:#d96b7029;color:#a94f55;border:1px solid #d96b7038}.list-toggle.green{background:#55a98529;color:#347b5d;border:1px solid #55a98538}.word-list{background:white;border:1px solid var(--line);border-radius:15px;padding:10px;max-height:390px;overflow:auto}.word-entry{padding:9px 5px;border-bottom:1px solid #f0efeb}.word-entry:last-child{border:0}.word-entry strong{font-size:15px;font-weight:700}.word-entry .wp{display:inline;font-size:11px;font-weight:400;color:#9a9aa0;margin-left:6px}.word-entry .mn{display:block;font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+
+/* 학습 레이아웃: 좌측(뜻/성조 재학습 병렬) - 중앙(카드) - 우측(아는 단어) */
+.study-layout{display:grid;grid-template-columns:minmax(150px,1fr) minmax(300px,2.5fr) minmax(150px,1fr);gap:14px;align-items:start}
+.left-lists-grid{display:grid;grid-template-columns:1fr;gap:0;align-items:start}
+.list-group{display:flex;flex-direction:column}
+.list-toggle{width:100%;height:46px;padding:0 8px;border-radius:14px;font-size:12.5px;margin-bottom:10px;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:5px}
+.list-toggle.red{background:#d96b7029;color:#a94f55;border:1px solid #d96b7038}
+.list-toggle.green{background:#55a98529;color:#347b5d;border:1px solid #55a98538}
+.word-list{background:white;border:1px solid var(--line);border-radius:15px;padding:10px;max-height:390px;overflow:auto;margin-bottom:10px}
+.word-entry{padding:9px 5px;border-bottom:1px solid #f0efeb}.word-entry:last-child{border:0}.word-entry strong{font-size:15px;font-weight:700}.word-entry .wp{display:inline;font-size:11px;font-weight:400;color:#9a9aa0;margin-left:6px}.word-entry .mn{display:block;font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+
 .card-stack{position:relative;min-height:420px}
-.flashcard{min-height:420px;background:white;border:1.5px solid var(--line);border-radius:24px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 10px 35px #2220;position:relative;z-index:2;touch-action:pan-y;user-select:none;cursor:pointer;transition:transform .96s cubic-bezier(.22,.61,.36,1),opacity .94s ease,background-color .22s ease,border-color .22s ease,box-shadow .22s ease;will-change:transform,opacity}
+.flashcard{min-height:420px;background:white;border:1.5px solid var(--line);border-radius:24px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 10px 35px #2220;position:relative;z-index:2;touch-action:none;user-select:none;cursor:pointer;transition:transform .96s cubic-bezier(.22,.61,.36,1),opacity .94s ease,background-color .22s ease,border-color .22s ease,box-shadow .22s ease;will-change:transform,opacity}
 .flashcard.next-preview{position:absolute;inset:0;z-index:1;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.04);transition:none}
-.flashcard.swiping,.flashcard.no-transition{transition:none!important}.flashcard.swipe-left{background:#ffe5e6!important;border-color:#d96b70!important;box-shadow:0 16px 42px rgba(217,107,112,.42)!important}.flashcard.swipe-right{background:#e2f6ec!important;border-color:#55a985!important;box-shadow:0 16px 42px rgba(85,169,133,.42)!important}.face-label{font-size:11px;color:#a0a0a0;letter-spacing:.1em;margin-bottom:22px}.mainword{font-size:clamp(29px,5vw,43px);font-weight:760;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}.pinyin{font-size:19px;color:#777;margin-top:14px}.back-list{width:100%;display:grid;gap:12px;text-align:left;padding-bottom:20px}.back-item{border-bottom:1px solid #f0eee9;padding-bottom:9px}.back-key{font-size:10px;color:#a0a0a0;margin-bottom:3px}.back-value{font-size:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4}.back-value.chinese{font-size:20px}.video-title{position:absolute;right:17px;bottom:15px;max-width:70%;font-size:10px;color:#9a9aa0;text-align:right;overflow-wrap:anywhere}
-.card-tools{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:14px 0 7px}.card-tools #prevBtn{padding:9px 11px;font-size:13px}.classify{min-width:80px;padding:9px 12px;font-size:13px}.again{background:#fbe9e8;color:#a33}.known{background:#e6f4ed;color:#267451}.swipehint{text-align:center;color:#a0a0a0;font-size:11px;margin-top:10px;line-height:1.5}.result{text-align:center;padding:28px 10px}.percent{font-size:58px;font-weight:800}.listline{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
-.modal-backdrop{position:fixed;inset:0;background:#17171766;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}.modal{background:white;border-radius:20px;padding:24px;width:min(440px,100%);box-shadow:0 20px 70px #0003}.modal-actions{display:grid;gap:10px;margin-top:20px}.modal-actions button{width:100%}.review-card{min-height:210px;border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer}.review-card .cn{font-size:26px;font-weight:750}.review-card .ko{font-size:17px;color:#666}
-@media(max-width:760px){.wrap{padding:18px 13px 42px}.panel{padding:17px}.study-layout{grid-template-columns:1fr 1fr;gap:9px}.card-column{grid-column:1/-1;grid-row:1}.list-column{grid-row:2}.card-stack,.flashcard{min-height:360px}.flashcard{padding:22px}.word-list{max-height:230px}.head-actions{gap:5px}.icon-btn{width:38px;height:38px}.pause-btn{height:38px;padding:0 10px;font-size:13px}}
-@media(max-width:390px){.head-actions{gap:4px}.icon-btn{width:35px;height:35px}.pause-btn{padding:0 8px;font-size:12px}}
+.flashcard.swiping,.flashcard.no-transition{transition:none!important}
+.flashcard.swipe-left,.flashcard.swipe-up{background:#ffe5e6!important;border-color:#d96b70!important;box-shadow:0 16px 42px rgba(217,107,112,.42)!important}
+.flashcard.swipe-right{background:#e2f6ec!important;border-color:#55a985!important;box-shadow:0 16px 42px rgba(85,169,133,.42)!important}
+.face-label{font-size:11px;color:#a0a0a0;letter-spacing:.1em;margin-bottom:22px}.mainword{font-size:clamp(29px,5vw,43px);font-weight:760;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}.pinyin{font-size:19px;color:#777;margin-top:14px}.back-list{width:100%;display:grid;gap:12px;text-align:left;padding-bottom:20px}.back-item{border-bottom:1px solid #f0eee9;padding-bottom:9px}.back-key{font-size:10px;color:#a0a0a0;margin-bottom:3px}.back-value{font-size:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4}.back-value.chinese{font-size:20px}.video-title{position:absolute;right:17px;bottom:15px;max-width:70%;font-size:10px;color:#9a9aa0;text-align:right;overflow-wrap:anywhere}
+
+/* 버튼 1줄(듣기, 병음 보기, 이전 단어) & 2줄(단어 재학습, 성조 재학습, 아는 단어) */
+.card-tools{display:flex;justify-content:center;gap:7px;flex-wrap:nowrap;margin:14px 0 7px}
+.card-tools button{padding:9px 11px;font-size:13px;white-space:nowrap}
+.classify-row{display:flex;justify-content:center;gap:7px;flex-wrap:nowrap;margin:7px 0}
+.classify{flex:1;max-width:140px;padding:10px 8px;font-size:13px;white-space:nowrap}
+.again{background:#fbe9e8;color:#a33}.known{background:#e6f4ed;color:#267451}
+.swipehint{text-align:center;color:#a0a0a0;font-size:11px;margin-top:10px;line-height:1.5}.result{text-align:center;padding:28px 10px}.percent{font-size:58px;font-weight:800}
+.upload-instruction{font-size:20px}
+.percent-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:76px}
+.firework{position:absolute;top:50%;width:42px;height:42px;pointer-events:none;transform:translateY(-50%);animation:firework-pop 1.15s ease-out infinite}
+.firework:before,.firework:after{content:"";position:absolute;inset:0;border-radius:50%;background:
+ radial-gradient(circle at 50% 5%,#f2b84b 0 2px,transparent 3px),
+ radial-gradient(circle at 95% 50%,#e87979 0 2px,transparent 3px),
+ radial-gradient(circle at 50% 95%,#8f9de8 0 2px,transparent 3px),
+ radial-gradient(circle at 5% 50%,#65b995 0 2px,transparent 3px),
+ radial-gradient(circle at 18% 18%,#e87979 0 2px,transparent 3px),
+ radial-gradient(circle at 82% 18%,#f2b84b 0 2px,transparent 3px),
+ radial-gradient(circle at 82% 82%,#65b995 0 2px,transparent 3px),
+ radial-gradient(circle at 18% 82%,#8f9de8 0 2px,transparent 3px)}
+.firework:after{transform:rotate(22deg) scale(.72);animation:firework-spin 1.15s ease-out infinite}
+#fireworkLeft{left:calc(50% - 112px)}
+#fireworkRight{right:calc(50% - 112px);animation-delay:.28s}
+@keyframes firework-pop{0%{opacity:0;scale:.25}25%{opacity:1;scale:1.15}75%{opacity:.8;scale:1}100%{opacity:0;scale:1.35}}
+@keyframes firework-spin{0%{transform:rotate(0) scale(.35)}100%{transform:rotate(100deg) scale(1.15)}}
+.listline{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.sess-item,.fileitem{display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0efeb;padding:4px 0}.sess-item:last-child,.fileitem:last-child{border:0}.sess-open{flex:1;display:flex;justify-content:space-between;gap:10px;text-align:left;background:transparent;color:#292a2d;padding:11px 6px;border-radius:10px;font-size:14px;font-weight:650;overflow-wrap:anywhere}.sess-open:hover{background:#f5f4f0}.sess-open .pg{color:var(--accent);white-space:nowrap}.del{background:#fbe9e8;color:#a33;padding:8px 11px;font-size:12px;flex-shrink:0}
+.modal-backdrop{position:fixed;inset:0;background:#17171766;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}.modal{background:white;border-radius:20px;padding:24px;width:min(440px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 70px #0003}.modal-actions{display:grid;gap:10px;margin-top:20px}.modal-actions button{width:100%}.modal-actions.two{grid-template-columns:1fr 1fr}.review-card{min-height:210px;border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer}.review-card .cn{font-size:26px;font-weight:750}.review-card .ko{font-size:17px;color:#666}
+.header-tools{display:flex;flex-direction:row;align-items:center;gap:7px;flex-shrink:0}.abandon-theme{background:#fff8f7!important;border-color:#f0d4d1!important}.abandon-theme .step{color:#c46b68}.abandon-theme .choice button.active,.abandon-theme #startQuiz{background:#b85d5a;color:#fff}.abandon-theme .result-again-btn{background:#b85d5a;color:#fff}.abandon-theme .again{background:#f7dfdd;color:#9f4d49}.home-confirm .modal{border:1px solid #e8e4df}
+.result-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:22px}
+.result-actions button{padding:11px 14px;font-size:13.5px}
+
+@media(max-width:760px){
+  .header-tools{flex-direction:column;gap:7px}
+  .wrap{padding:18px 13px 42px}
+  .panel{padding:17px}
+  /* 모바일: 1행 카드(전체 폭), 2행 좌측하단(뜻/성조 재학습 세로 스택) & 우측하단(아는 단어) */
+  .study-layout{grid-template-columns:1fr 1fr;gap:9px;align-items:start}
+  .card-column{grid-column:1/-1;grid-row:1}
+  .left-list-col{grid-column:1;grid-row:2}
+  .right-list-col{grid-column:2;grid-row:2}
+  /* 모바일에서 좌측하단은 세로 배치(1열)로 쌓여서 단어 재학습 목록이 열리면 성조 재학습 버튼이 아래로 밀리고 닫으면 위로 올라옴 */
+  .left-lists-grid{grid-template-columns:1fr;gap:0}
+  .card-stack,.flashcard{min-height:360px}
+  .flashcard{padding:22px}
+  .word-list{max-height:230px}
+  .head-actions{gap:5px}
+  .icon-btn,.pause-btn{width:38px;height:38px}
+  .card-tools button,.classify{font-size:12px;padding:9px 6px}
+}
+@media(max-width:390px){.head-actions{gap:4px}.icon-btn,.pause-btn{width:35px;height:35px;font-size:16px}}
+
+.list-toggle.orange{background:#f59e0b29;color:#b45309;border:1px solid #f59e0b42}
+.flashcard.swipe-up{background:#fff3e0!important;border-color:#f59e0b!important;box-shadow:0 16px 42px rgba(245,158,11,.42)!important}
+.classify.pinyin-again{background:#fef3c7;color:#b45309}
+.abandon-theme .classify.pinyin-again{background:#fde68a;color:#92400e}
+.review-btn-orange{background:#ea8c2b!important;color:#fff!important}
+.home-review-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.home-review-btn{background:#f5f4f0;color:#292a2d;border:1px solid var(--line);padding:12px 10px;border-radius:12px;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.home-review-btn:hover:not(:disabled){background:#eceae4}
+.home-review-btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:600px){.home-review-grid{grid-template-columns:1fr}}
+
 </style></head><body><div class="wrap">
-<header class="top"><h1>Language Reactor 중국어 단어 퀴즈</h1><div class="sub">Language Reactor에서 저장한 영상 속 단어! 플래시 카드로 공부해요.</div></header>
-<section id="uploadPanel" class="panel"><div class="step">STEP 1 · 엑셀 불러오기</div><h2>Language Reactor - 저장된 항목 - 저장된 단어에서 다운받은 엑셀 파일을 선택해 주세요.</h2><p class="sub">랭귀지 리액터에서 파일 내보내기 시, EXCEL에서 항목 유형 '단어'만 선택해서 내보내주세요!</p><input id="fileInput" type="file" accept=".xlsx,.xls,.csv"><div id="loadMessage" class="sub" style="margin-top:12px"></div></section>
+<header class="top"><div class="headrow"><div><h1>Language Reactor 중국어 단어 퀴즈</h1><div class="sub">Language Reactor에서 저장한 영상 속 단어! 플래시 카드로 공부해요.</div></div><div class="header-tools"><button class="icon-btn" id="menuBtn" title="파일관리함" aria-label="파일관리함"><svg viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><path d="M3.5 10h17"/></svg></button><button class="icon-btn" id="homeBtn" title="홈으로" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5.5 9v11h13V9M9.5 20v-7h5v7"/></svg></button></div></div></header>
+<section id="uploadPanel" class="panel"><div class="step">STEP 1 · 엑셀 불러오기</div><h2 class="upload-instruction">Language Reactor - ‘저장된 항목’ - ‘저장된 단어’에서 다운받은 엑셀 파일을 선택해 주세요.</h2><p class="sub">랭귀지 리액터에서 파일 내보내기 시, EXCEL에서 항목 유형 '단어'만 선택해서 내보내주세요!</p><input id="fileInput" type="file" accept=".xlsx,.xls,.csv"><div id="loadMessage" class="sub" style="margin-top:12px"></div></section>
+<section id="sessionPanel" class="panel"><div class="step">SAVED SESSIONS</div><h2>학습 진행 현황</h2><p class="sub" style="margin:0 0 8px">파일 이름을 누르면 이어서 학습할 수 있어요.</p><div id="sessionList"></div></section>
+<section id="wordReviewPanel" class="panel"><div class="step">WORD REVIEW</div><h2>모르는 단어 복습</h2><p class="sub" style="margin:0">불러온 모든 파일에서 모르는 단어만 통합해 랜덤 복습할 수 있습니다.</p><div class="home-review-grid"><button id="homeReviewAllBtn" class="home-review-btn">전체 재학습 <span id="homeAllCount">0</span></button><button id="homeReviewMeaningBtn" class="home-review-btn">단어 재학습 <span id="homeMeaningCount">0</span></button><button id="homeReviewPinyinBtn" class="home-review-btn">성조 재학습 <span id="homePinyinCount">0</span></button></div></section>
 <section id="dataPanel" class="panel hidden"><div class="row between"><div><div class="step">STEP 2 · 데이터 확인</div><h2 style="margin:0">불러온 단어장</h2></div><button id="changeFile" class="secondary">파일 다시 선택</button></div><div id="dataStats" class="stats"></div><p class="sub">중복 항목도 그대로 유지합니다. 마지막 데이터 행부터 역순으로 표시됩니다.</p><div class="table-wrap"><table><thead><tr><th>원본 행</th><th>단어 (E)</th><th>단어 뜻 (I)</th><th>스크립트 (C)</th><th>번역 (D)</th><th>단어 병음 (M)</th><th>문장 병음 (N)</th><th>Video Title (Q)</th></tr></thead><tbody id="dataRows"></tbody></table></div><div class="row" style="justify-content:flex-end;margin-top:18px"><button id="toSetup">카드 퀴즈 생성하기</button></div></section>
 <section id="setupPanel" class="panel hidden"><div class="step">QUIZ SETTINGS</div><h2>어떤 방식으로 외워볼까요?</h2><div class="field"><label>카드 순서</label><div class="choice" id="orderChoices"><button data-value="ordered" class="active">순서대로</button><button data-value="random">랜덤으로</button></div><div class="sub">순서대로는 엑셀 마지막 데이터 행부터 역순으로 진행합니다.</div></div><div class="field"><label>카드 앞면</label><div class="choice" id="viewChoices"><button data-value="word" class="active">단어 보기</button><button data-value="meaning">뜻 보기</button><button data-value="script">스크립트 보기</button><button data-value="translation">스크립트 번역보기</button></div></div><div class="row between"><span id="setupCount" class="sub"></span><button id="startQuiz">퀴즈 시작하기</button></div></section>
-<section id="quizPanel" class="hidden"><div class="quiz-head"><div><div class="step">FLASHCARDS</div><strong id="counter"></strong></div><div class="head-actions"><button class="icon-btn" id="homeBtn" title="홈으로" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-7h6v7"/></svg></button><button class="icon-btn" id="settingsBtn" title="다음 카드 앞면 설정" aria-label="다음 카드 앞면 설정"><svg viewBox="0 0 24 24"><path d="M20.2 8.2A8.7 8.7 0 0 0 4.7 6.1L3 8"/><path d="M3 3.8V8h4.2"/><path d="M3.8 15.8a8.7 8.7 0 0 0 15.5 2.1L21 16"/><path d="M21 20.2V16h-4.2"/><path d="M9.2 8.5 10 7h4l.8 1.5 1.5.9-.2 1.8.2 1.8-1.5.9-.8 1.5h-4l-.8-1.5-1.5-.9.2-1.8-.2-1.8z"/><circle cx="12" cy="11.2" r="1.8"/></svg></button><button class="pause-btn" id="pauseBtn">일시정지</button></div></div><div class="progressline"><div id="progressBar"></div></div>
-<div class="study-layout"><aside class="list-column"><button id="againListToggle" class="list-toggle red">재학습 단어목록 <span id="againListNum">0</span></button><div id="againList" class="word-list hidden"></div></aside>
-<div class="card-column"><div class="card-stack"><div id="nextFlashcard" class="flashcard next-preview hidden" aria-hidden="true"><div id="nextCardContent"></div></div><div id="flashcard" class="flashcard" role="button" tabindex="0"><div id="cardContent"></div></div></div><div id="frontTools" class="card-tools"></div><div class="card-tools"><button id="prevBtn" class="outline">☜ 이전 단어(A)</button><button id="againBtn" class="classify again">← 재학습</button><button id="knownBtn" class="classify known">아는 단어 →</button></div><div id="swipeHint" class="swipehint">카드를 클릭하거나 스페이스 바를 누르면 앞·뒷면이 바뀝니다.<br>좌우 방향키로 단어를 분류할 수 있어요.</div></div>
-<aside class="list-column"><button id="knownListToggle" class="list-toggle green">아는 단어목록 <span id="knownListNum">0</span></button><div id="knownList" class="word-list hidden"></div></aside></div></section>
-<section id="resultPanel" class="panel hidden"><div class="result"><div class="step">SESSION COMPLETE</div><h2>오늘의 학습 결과</h2><div id="resultPercent" class="percent">0%</div><div id="resultCount" class="sub"></div></div><div class="listline"><span>아는 단어</span><strong id="knownCount"></strong></div><div class="listline"><span>재학습할 단어</span><strong id="againCount"></strong></div><div class="row" style="justify-content:center;margin-top:22px"><button id="reviewBtn">재학습하기</button><button id="restartBtn" class="secondary">전체 다시 풀기</button></div></section></div>
+<section id="quizPanel" class="hidden"><div class="quiz-head"><div><div class="step">FLASHCARDS</div><strong id="counter"></strong></div><div class="head-actions"><button class="icon-btn" id="settingsBtn" title="다음 카드 앞면 설정" aria-label="다음 카드 앞면 설정"><svg viewBox="0 0 24 24"><path d="M20.2 8.2A8.7 8.7 0 0 0 4.7 6.1L3 8"/><path d="M3 3.8V8h4.2"/><path d="M3.8 15.8a8.7 8.7 0 0 0 15.5 2.1L21 16"/><path d="M21 20.2V16h-4.2"/><path d="M9.2 8.5 10 7h4l.8 1.5 1.5.9-.2 1.8.2 1.8-1.5.9-.8 1.5h-4l-.8-1.5-1.5-.9.2-1.8-.2-1.8z"/><circle cx="12" cy="11.2" r="1.8"/></svg></button><button class="pause-btn" id="pauseBtn" title="일시정지" aria-label="일시정지"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 3.8v16.4L15 12z" fill="white" stroke="white" stroke-linejoin="round"/><path d="M18 4v16M22 4v16" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg></button></div></div><div class="progressline"><div id="progressBar"></div></div>
+<div class="study-layout">
+  <aside class="list-column left-list-col">
+    <div class="left-lists-grid">
+      <div class="list-group">
+        <button id="pinyinAgainListToggle" class="list-toggle orange">↑ 성조 재학습 <span id="pinyinAgainListNum">0</span></button>
+        <div id="pinyinAgainList" class="word-list hidden"></div>
+      </div>
+      <div class="list-group">
+        <button id="meaningAgainListToggle" class="list-toggle red">← 단어 재학습 <span id="meaningAgainListNum">0</span></button>
+        <div id="meaningAgainList" class="word-list hidden"></div>
+      </div>
+    </div>
+  </aside>
+  <div class="card-column">
+    <div class="card-stack">
+      <div id="nextFlashcard" class="flashcard next-preview hidden" aria-hidden="true"><div id="nextCardContent"></div></div>
+      <div id="flashcard" class="flashcard" role="button" tabindex="0"><div id="cardContent"></div></div>
+    </div>
+    <div id="actionTools" class="card-tools">
+      <button id="listenBtn" class="secondary">듣기(Q)</button>
+      <button id="pinyinBtn" class="outline">병음 보기(W)</button>
+      <button id="prevBtn" class="outline">☜ 이전 단어(A)</button>
+    </div>
+    <div class="classify-row">
+      <button id="meaningAgainBtn" class="classify again">← 단어 재학습</button>
+      <button id="pinyinAgainBtn" class="classify pinyin-again">↑ 성조 재학습</button>
+      <button id="knownBtn" class="classify known">아는 단어 →</button>
+    </div>
+    <div id="swipeHint" class="swipehint">카드를 클릭하거나 스페이스 바를 누르면 앞·뒷면이 바뀝니다.<br>좌·상·우 방향키로 단어를 분류할 수 있어요.</div>
+  </div>
+  <aside class="list-column right-list-col">
+    <button id="knownListToggle" class="list-toggle green">아는 단어 <span id="knownListNum">0</span></button>
+    <div id="knownList" class="word-list hidden"></div>
+  </aside>
+</div></section>
+<section id="resultPanel" class="panel hidden"><div class="result"><div id="resultStep" class="step">SESSION COMPLETE</div><h2 id="resultHeading">오늘의 학습 결과</h2><div class="percent-wrap"><span id="fireworkLeft" class="firework hidden" aria-hidden="true"></span><div id="resultPercent" class="percent">0%</div><span id="fireworkRight" class="firework hidden" aria-hidden="true"></span></div><div id="resultCount" class="sub"></div></div><div class="listline"><span>아는 단어</span><strong id="knownCount"></strong></div><div class="listline"><span>재학습할 단어</span><strong id="againCount"></strong></div><div class="listline"><span>미학습한 단어</span><strong id="unlearnedCount"></strong></div><div class="result-actions"><button id="reviewMeaningBtn" class="result-again-btn">단어 재학습</button><button id="reviewPinyinBtn" class="result-again-btn review-btn-orange">성조 재학습</button><button id="reviewAllBtn" class="result-again-btn">전체 재학습</button><button id="resultHomeBtn" class="secondary">홈으로 돌아가기</button></div></section></div>
+<div id="homeConfirmModal" class="modal-backdrop hidden home-confirm"><div class="modal"><div class="step">HOME</div><h2>홈으로 돌아갈까요?</h2><p class="sub">지금까지의 학습 내용을 저장하고 홈으로 돌아갑니다.</p><div class="modal-actions two"><button id="homeYesBtn">예</button><button id="homeCloseBtn" class="secondary">닫기</button></div></div></div>
 <div id="faceSettingsModal" class="modal-backdrop hidden"><div class="modal"><div class="step">NEXT CARD SETTINGS</div><h2>다음 카드 앞면 설정</h2><p class="sub">이미 넘긴 카드는 그대로 두고, 현재 카드부터 새 앞면 설정을 적용합니다.</p><div class="choice" id="nextViewChoices" style="margin-top:16px"><button data-value="word">단어 보기</button><button data-value="meaning">뜻 보기</button><button data-value="script">스크립트 보기</button><button data-value="translation">스크립트 번역보기</button></div><div class="modal-actions"><button id="applyNextView">적용하기</button><button id="cancelNextView" class="secondary">취소</button></div></div></div>
-<div id="pauseModal" class="modal-backdrop hidden"><div class="modal"><div class="step">PAUSED</div><h2>잠시 쉬어갈까요?</h2><p class="sub">지금까지 쌓인 재학습 카드 <b id="pausedAgainCount">0</b>개 중 최대 5개를 랜덤으로 다시 볼 수 있어요.</p><div class="modal-actions"><button id="pauseReviewBtn" class="again">5개 랜덤 재학습</button><button id="continueBtn">계속하기</button><button id="closePauseBtn" class="secondary">닫기</button></div></div></div>
+<div id="pauseModal" class="modal-backdrop hidden"><div class="modal"><div class="step">PAUSED</div><h2>잠시 쉬어갈까요?</h2><p class="sub">지금까지 쌓인 재학습 카드 <b id="pausedAgainCount">0</b>개 중 최대 5개를 랜덤으로 다시 볼 수 있어요.</p><div class="modal-actions"><button id="pauseReviewBtn" class="again">5개 랜덤 재학습</button><button id="continueBtn">계속하기</button><button id="stopBtn" class="outline">중단하기</button><button id="closePauseBtn" class="secondary">닫기</button></div></div></div>
+<div id="stopModal" class="modal-backdrop hidden"><div class="modal"><div class="step">STOP</div><h2>정말로 중단하시겠습니까?</h2><p class="sub">지금까지 넘긴 카드를 기준으로 학습 결과를 보여드려요.</p><div class="modal-actions two"><button id="stopYes">예</button><button id="stopNo" class="secondary">아니오</button></div></div></div>
+<div id="resumeModal" class="modal-backdrop hidden"><div class="modal"><div class="step">RESUME</div><h2>이전 학습이 있어요</h2><p class="sub" id="resumeInfo"></p><div class="modal-actions two"><button id="resumeYes">이어하기</button><button id="resumeNew" class="outline">새로 시작하기</button></div><div class="modal-actions" style="margin-top:10px"><button id="resumeClose" class="secondary">닫기</button></div></div></div>
+<div id="fileModal" class="modal-backdrop hidden"><div class="modal"><div class="row between"><div><div class="step">FILE MANAGER</div><h2 style="margin:0">파일관리함</h2></div><button id="closeFiles" class="secondary">닫기</button></div><p class="sub" style="margin:12px 0 6px">파일 이름을 누르면 해당 학습으로 이동해요.</p><div id="fileList"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button id="clearAll" class="outline">전체 삭제</button></div></div></div>
+<div id="homeReviewModal" class="modal-backdrop hidden"><div class="modal"><div class="row between"><div><div class="step" id="homeReviewStep">WORD REVIEW</div><h2 id="homeReviewTitle" style="margin:0">통합 복습</h2></div><button id="exitHomeReviewBtn" class="secondary">닫기</button></div><p id="homeReviewCounter" class="sub"></p><div id="homeReviewCard" class="review-card"></div><div class="row between" style="margin-top:14px"><button id="homeReviewPrev" class="secondary">이전</button><button id="homeReviewNext">다음</button></div><p id="homeReviewHint" class="sub" style="text-align:center;margin:12px 0 0">스페이스 바: 앞·뒷면 · ← 이전 · → 다음</p></div></div>
 <div id="reviewModal" class="modal-backdrop hidden"><div class="modal"><div class="row between"><div><div class="step">QUICK REVIEW</div><h2 style="margin:0">재학습 카드</h2></div><button id="exitReviewBtn" class="secondary">닫기</button></div><p id="reviewCounter" class="sub"></p><div id="reviewCard" class="review-card"></div><div class="row between" style="margin-top:14px"><button id="reviewPrev" class="secondary">이전</button><button id="reviewNext">다음</button></div><p class="sub" style="text-align:center;margin:12px 0 0">스페이스 바: 앞·뒷면 · ← 이전 · → 다음</p></div></div>
 <script>
-(()=>{const $=id=>document.getElementById(id),panels=['uploadPanel','dataPanel','setupPanel','quizPanel','resultPanel'],show=id=>panels.forEach(p=>$(p).classList.toggle('hidden',p!==id));
-let rows=[],order='ordered',view='word',deck=[],index=0,isBack=false,paused=false,known=[],again=[],history=[],setupTarget='all',reviewItems=[],reviewIndex=0,reviewBack=false,animating=false;
+(()=>{const $=id=>document.getElementById(id),panels=['uploadPanel','dataPanel','setupPanel','quizPanel','resultPanel'],
+show=id=>{panels.forEach(p=>$(p).classList.toggle('hidden',p!==id));const isUp=(id==='uploadPanel');$('sessionPanel').classList.toggle('hidden',!isUp);$('wordReviewPanel').classList.toggle('hidden',!isUp);if(isUp){renderSessions();renderHomeReviewCounts()}};
+let rows=[],order='ordered',view='word',deck=[],index=0,isBack=false,paused=false,known=[],meaningAgain=[],pinyinAgain=[],history=[],setupTarget='all',reviewItems=[],reviewIndex=0,reviewBack=false,animating=false,curId=null,resultAbandoned=false;
 const labels={word:'단어',meaning:'단어 뜻',script:'스크립트',translation:'스크립트 번역',wordPinyin:'단어 병음',phrasePinyin:'스크립트 병음'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const isMobileView=()=>window.matchMedia('(max-width: 760px)').matches;
+
+/* ---------- 저장소 (localStorage) ---------- */
+const K='lrq_';
+const jget=(k,d)=>{try{const v=localStorage.getItem(K+k);return v?JSON.parse(v):d}catch(e){return d}};
+const jset=(k,v)=>{try{localStorage.setItem(K+k,JSON.stringify(v));return true}catch(e){return false}};
+const jdel=k=>{try{localStorage.removeItem(K+k)}catch(e){}};
+let sessions=jget('index',[]);
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+
+function getAllAgain(){
+  const seen=new Set();
+  const res=[];
+  for(const item of [...meaningAgain,...pinyinAgain]){
+    if(!seen.has(item.idx)){seen.add(item.idx);res.push(item);}
+  }
+  return res;
+}
+
+function saveProg(mode){
+  if(!curId)return;
+  const snapshot={
+    order,view,
+    deck:deck.map(r=>r.idx),
+    index,
+    known:known.map(r=>r.idx),
+    again:meaningAgain.map(r=>r.idx),
+    pinyinAgain:pinyinAgain.map(r=>r.idx),
+    history:history.map(h=>({i:h.item.idx,type:h.type,index:h.index})),
+    mode:mode||'quiz',
+    setupTarget
+  };
+  if(setupTarget!=='all'){jset('reviewprog_'+curId,snapshot);renderHomeReviewCounts();return}
+  jset('prog_'+curId,snapshot);renderHomeReviewCounts();
+}
+function progText(s){const p=jget('prog_'+s.id,null);return p&&p.deck?`${Math.min(p.index||0,p.deck.length)}/${p.deck.length}`:`0/${s.total}`}
+function removeSession(id){sessions=sessions.filter(s=>s.id!==id);jset('index',sessions);jdel('rows_'+id);jdel('prog_'+id);jdel('reviewprog_'+id);if(jget('active',null)===id)jdel('active')}
+function renderSessions(){const list=sessions.slice().reverse();$('sessionList').innerHTML=list.length?list.map(s=>`<div class="sess-item"><button class="sess-open" data-open="${s.id}"><span>${esc(s.name)}</span><span class="pg">(${progText(s)})</span></button></div>`).join(''):'<div class="sub" style="padding:10px 0">저장된 학습이 아직 없어요. 위에서 엑셀 파일을 불러와 보세요.</div>'}
+function renderFiles(){const list=sessions.slice().reverse();$('fileList').innerHTML=list.length?list.map(s=>`<div class="fileitem"><button class="sess-open" data-open="${s.id}"><span>${esc(s.name)}</span><span class="pg">(${progText(s)})</span></button><button class="del" data-del="${s.id}">삭제</button></div>`).join(''):'<div class="sub" style="padding:10px 0">저장된 파일이 없어요.</div>'}
+function syncChoices(){$('orderChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value===order));$('viewChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value===view))}
+function resetState(){deck=[];index=0;isBack=false;paused=false;animating=false;known=[];meaningAgain=[];pinyinAgain=[];history=[];setupTarget='all';reviewItems=[];reviewIndex=0;reviewBack=false}
+function fillData(){const meta=sessions.find(s=>s.id===curId);$('dataStats').innerHTML=`<div class="stat"><b>${rows.length}</b>개 항목</div><div class="stat">파일: <b>${esc(meta?meta.name:'')}</b></div><div class="stat">중복 항목 포함</div>`;$('dataRows').innerHTML=rows.map(r=>`<tr><td>${r.sourceRow}</td><td>${esc(r.word)}</td><td>${esc(r.meaning)}</td><td>${esc(r.script)}</td><td>${esc(r.translation)}</td><td>${esc(r.wordPinyin)}</td><td>${esc(r.phrasePinyin)}</td><td>${esc(r.videoTitle)}</td></tr>`).join('');$('setupCount').textContent=`총 ${rows.length}개 카드`}
+function loadSession(id){const meta=sessions.find(s=>s.id===id),data=jget('rows_'+id,null);if(!meta||!data){alert('저장된 데이터를 찾을 수 없어 목록에서 삭제했어요.');removeSession(id);renderSessions();return false}curId=id;rows=data;rows.forEach((r,i)=>r.idx=i);resetState();return true}
+function openSession(id){if(!loadSession(id))return;const p=jget('prog_'+id,null);if(p&&p.deck&&p.deck.length&&((p.index||0)>0||p.mode==='done'))showResume();else{jdel('active');fillData();show('dataPanel')}}
+function showResume(){const meta=sessions.find(s=>s.id===curId);$('resumeInfo').innerHTML=`<b>${esc(meta.name)}</b><br>진행: ${progText(meta)} · 이어서 학습할까요, 처음부터 새로 시작할까요?`;$('resumeModal').classList.remove('hidden')}
+function restoreProg(){
+  const p=jget('prog_'+curId,null);
+  if(!p){fillData();show('dataPanel');return}
+  order=p.order||'ordered';view=p.view||'word';setupTarget=p.setupTarget||'all';
+  deck=(p.deck||[]).map(i=>rows[i]).filter(Boolean);
+  index=p.index||0;
+  known=(p.known||[]).map(i=>rows[i]).filter(Boolean);
+  meaningAgain=(p.again||[]).map(i=>rows[i]).filter(Boolean);
+  pinyinAgain=(p.pinyinAgain||[]).map(i=>rows[i]).filter(Boolean);
+  history=(p.history||[]).map(h=>({item:rows[h.i],type:h.type==='again'?'meaning':h.type,index:h.index})).filter(h=>h.item);
+  isBack=false;paused=false;animating=false;
+  if(!deck.length){fillData();show('dataPanel');return}
+  jset('active',curId);show('quizPanel');render();
+}
+$('resumeYes').onclick=()=>{$('resumeModal').classList.add('hidden');restoreProg()};
+$('resumeNew').onclick=()=>{$('resumeModal').classList.add('hidden');jdel('prog_'+curId);jdel('reviewprog_'+curId);jdel('active');resetState();order='ordered';view='word';syncChoices();fillData();openSetup('all')};
+$('resumeClose').onclick=()=>{$('resumeModal').classList.add('hidden');curId=null;jdel('active');resetState();show('uploadPanel')};
+$('sessionList').onclick=e=>{const b=e.target.closest('[data-open]');if(b)openSession(b.dataset.open)};
+$('homeBtn').onclick=()=>{const inQuiz=!$('quizPanel').classList.contains('hidden');if(inQuiz){saveProg('quiz');$('homeConfirmModal').classList.remove('hidden')}else{goHome()}};
+$('homeYesBtn').onclick=()=>{$('homeConfirmModal').classList.add('hidden');saveProg('quiz');goHome()};
+$('homeCloseBtn').onclick=()=>$('homeConfirmModal').classList.add('hidden');
+$('homeConfirmModal').onclick=e=>{if(e.target===$('homeConfirmModal'))$('homeConfirmModal').classList.add('hidden')};
+$('menuBtn').onclick=()=>{renderFiles();$('fileModal').classList.remove('hidden')};
+$('closeFiles').onclick=()=>$('fileModal').classList.add('hidden');
+$('fileList').onclick=e=>{const o=e.target.closest('[data-open]'),d=e.target.closest('[data-del]');if(o){$('fileModal').classList.add('hidden');openSession(o.dataset.open)}else if(d){const id=d.dataset.del,s=sessions.find(x=>x.id===id);if(!s||!window.confirm(`"${s.name}" 파일과 학습 기록을 삭제할까요?`))return;const wasCur=curId===id;removeSession(id);if(wasCur)goHome();renderFiles();renderSessions()}};
+$('clearAll').onclick=()=>{if(!sessions.length)return;if(!window.confirm('저장된 모든 파일과 학습 기록을 삭제할까요?'))return;sessions.slice().forEach(s=>removeSession(s.id));goHome();renderFiles()};
+function goHome(){jdel('active');curId=null;rows=[];resetState();order='ordered';view='word';syncChoices();$('fileInput').value='';$('loadMessage').textContent='';$('dataRows').innerHTML='';$('dataStats').innerHTML='';$('meaningAgainList').classList.add('hidden');$('pinyinAgainList').classList.add('hidden');$('knownList').classList.add('hidden');['pauseModal','reviewModal','faceSettingsModal','stopModal','resumeModal','homeConfirmModal'].forEach(m=>$(m).classList.add('hidden'));show('uploadPanel')}
+
 function syncButtonLabels(){
   const mobile=isMobileView();
   const prev=$('prevBtn');
@@ -55,20 +239,53 @@ function syncButtonLabels(){
   if(pinyin)pinyin.textContent=mobile?'병음 보기':'병음 보기(W)';
   const hint=$('swipeHint');
   if(hint)hint.innerHTML=mobile
-    ?'카드를 터치하면 앞·뒷면이 바뀝니다.<br>좌우로 스와이프 해 단어를 분류할 수 있어요.'
-    :'카드를 클릭하거나 스페이스 바를 누르면 앞·뒷면이 바뀝니다.<br>좌우 방향키로 단어를 분류할 수 있어요.';
+    ?'카드를 터치하면 앞·뒷면이 바뀝니다.<br>좌(단어 재학습)·상(성조 재학습)·우(아는 단어)로 스와이프 해 분류하세요.'
+    :'카드를 클릭하거나 스페이스 바를 누르면 앞·뒷면이 바뀝니다.<br>좌(← 단어)·상(↑ 성조)·우(→ 아는 단어) 방향키로 분류할 수 있어요.';
 }
 window.addEventListener('resize',syncButtonLabels);
-function normalize(data){const out=[];for(let i=1;i<data.length;i++){const r=data[i]||[],v={sourceRow:i+1,script:r[2]??'',translation:r[3]??'',word:r[4]??'',meaning:r[8]??'',wordPinyin:r[12]??'',phrasePinyin:r[13]??'',videoTitle:r[16]??''};if(Object.keys(v).some(k=>k!=='sourceRow'&&String(v[k]).trim()))out.push(v)}return out.reverse()}
-$('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('loadMessage').textContent='파일을 읽는 중입니다…';try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets['Saved Items']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});rows=normalize(raw);if(!rows.length)throw Error('가져올 데이터가 없습니다. C/D/E/I/M/N/Q열을 확인해 주세요.');$('dataStats').innerHTML=`<div class="stat"><b>${rows.length}</b>개 항목</div><div class="stat">시트: <b>${esc(wb.Sheets['Saved Items']?'Saved Items':wb.SheetNames[0])}</b></div><div class="stat">중복 항목 포함</div>`;$('dataRows').innerHTML=rows.map(r=>`<tr><td>${r.sourceRow}</td><td>${esc(r.word)}</td><td>${esc(r.meaning)}</td><td>${esc(r.script)}</td><td>${esc(r.translation)}</td><td>${esc(r.wordPinyin)}</td><td>${esc(r.phrasePinyin)}</td><td>${esc(r.videoTitle)}</td></tr>`).join('');$('setupCount').textContent=`총 ${rows.length}개 카드`;$('loadMessage').textContent='';show('dataPanel')}catch(err){$('loadMessage').textContent='불러오지 못했어요: '+err.message}};
-$('changeFile').onclick=()=>{show('uploadPanel');$('fileInput').value=''};$('toSetup').onclick=()=>openSetup('all');
+
+function normalize(data){const out=[];for(let i=1;i<data.length;i++){const r=data[i]||[],v={sourceRow:i+1,script:r[2]??'',translation:r[3]??'',word:r[4]??'',meaning:r[8]??'',wordPinyin:r[12]??'',phrasePinyin:r[13]??'',videoTitle:r[16]??''};if(Object.keys(v).some(k=>k!=='sourceRow'&&String(v[k]).trim()))out.push(v)}const o=out.reverse();o.forEach((v,i)=>v.idx=i);return o}
+$('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('loadMessage').textContent='파일을 읽는 중입니다…';try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets['Saved Items']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});const parsed=normalize(raw);if(!parsed.length)throw Error('가져올 데이터가 없습니다. C/D/E/I/M/N/Q열을 확인해 주세요.');
+rows=parsed;resetState();let name=f.name;if(sessions.some(s=>s.name===name)){const d=new Date(),p=n=>String(n).padStart(2,'0');name=`${f.name} · ${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`}
+const id=Date.now().toString(36);if(jset('rows_'+id,rows)){sessions.push({id,name,total:rows.length});jset('index',sessions);curId=id}else{curId=null;alert('저장 공간이 부족해서 이번 파일은 저장되지 않아요. 학습은 가능하지만 나갔다 오면 사라져요. 오른쪽 위 메뉴의 파일관리함에서 오래된 파일을 삭제해 주세요.')}
+order='ordered';view='word';syncChoices();fillData();$('loadMessage').textContent='';show('dataPanel')}catch(err){$('loadMessage').textContent='불러오지 못했어요: '+err.message}};
+$('changeFile').onclick=()=>{curId=null;resetState();show('uploadPanel');$('fileInput').value=''};$('toSetup').onclick=()=>openSetup('all');
 function choices(id,fn){$(id).onclick=e=>{const b=e.target.closest('button[data-value]');if(!b)return;$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));fn(b.dataset.value)}}choices('orderChoices',v=>order=v);choices('viewChoices',v=>view=v);
-function openSetup(target){setupTarget=target;$('setupCount').textContent=`${target==='again'?again.length:rows.length}개 카드로 시작합니다.`;show('setupPanel')}
-$('startQuiz').onclick=()=>start(setupTarget==='again'?again:rows);
-function start(source){deck=source.slice();if(order==='random')deck.sort(()=>Math.random()-.5);index=0;isBack=false;paused=false;animating=false;known=[];again=[];history=[];if(!deck.length){alert('학습할 카드가 없습니다.');return}show('quizPanel');render()}
+
+function getTargetSource(target){
+  if(target==='meaning')return meaningAgain;
+  if(target==='pinyin')return pinyinAgain;
+  if(target==='againAll')return getAllAgain();
+  return rows;
+}
+function openSetup(target){
+  setupTarget=target;
+  const src=getTargetSource(target);
+  $('setupCount').textContent=`${src.length}개 카드로 시작합니다.`;
+  $('setupPanel').classList.toggle('abandon-theme',target!=='all'&&resultAbandoned);
+  show('setupPanel');
+}
+$('startQuiz').onclick=()=>start(getTargetSource(setupTarget));
+
+function start(source){
+  deck=source.slice();
+  if(order==='random')deck.sort(()=>Math.random()-.5);
+  index=0;isBack=false;paused=false;animating=false;
+  known=[];meaningAgain=[];pinyinAgain=[];history=[];resultAbandoned=false;
+  if(!deck.length){alert('학습할 카드가 없습니다.');return}
+  if(curId&&setupTarget==='all')jset('active',curId);
+  show('quizPanel');render();
+}
 function backFields(){return({word:['meaning','wordPinyin','script','translation','phrasePinyin'],meaning:['word','wordPinyin','script','translation','phrasePinyin'],script:['translation','phrasePinyin','word','meaning','wordPinyin'],translation:['script','phrasePinyin','word','meaning','wordPinyin']})[view]}
 function entryHtml(r){return `<div class="word-entry"><strong>${esc(r.word||'—')}</strong>${r.wordPinyin?`<span class="wp">${esc(r.wordPinyin)}</span>`:''}<span class="mn">${esc(r.meaning||'—')}</span></div>`}
-function renderLists(){$('againListNum').textContent=again.length;$('knownListNum').textContent=known.length;$('againList').innerHTML=again.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 재학습 카드가 없어요.</div>';$('knownList').innerHTML=known.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 아는 단어가 없어요.</div>'}
+function renderLists(){
+  $('meaningAgainListNum').textContent=meaningAgain.length;
+  $('pinyinAgainListNum').textContent=pinyinAgain.length;
+  $('knownListNum').textContent=known.length;
+  $('meaningAgainList').innerHTML=meaningAgain.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 단어 재학습 카드가 없어요.</div>';
+  $('pinyinAgainList').innerHTML=pinyinAgain.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 성조 재학습 카드가 없어요.</div>';
+  $('knownList').innerHTML=known.slice().reverse().map(entryHtml).join('')||'<div class="sub">아직 아는 단어가 없어요.</div>';
+}
 function updateNextPreview(){
   const nextEl=$('nextFlashcard');
   const nextContent=$('nextCardContent');
@@ -85,18 +302,49 @@ function updateNextPreview(){
 function render(instantReset=false){
   resetSwipeVisual(instantReset);
   if(index>=deck.length){$('nextFlashcard').classList.add('hidden');finish();return}
-  const r=deck[index];$('counter').textContent=`${index+1} / ${deck.length}`;$('progressBar').style.width=`${index/deck.length*100}%`;$('frontTools').innerHTML='';
-  if(!isBack){const key={word:'word',meaning:'meaning',script:'script',translation:'translation'}[view];$('cardContent').innerHTML=`<div class="mainword">${esc(r[key]||'—')}</div>`;if(view==='word'||view==='script'){$('frontTools').innerHTML='<button id="listenBtn" class="secondary">듣기(Q)</button><button id="pinyinBtn" class="outline">병음 보기(W)</button>';$('listenBtn').onclick=e=>{e.stopPropagation();speak(view==='word'?r.word:r.script)};$('pinyinBtn').onclick=e=>{e.stopPropagation();let el=$('pinyinReveal');if(el){el.remove();return}el=document.createElement('div');el.id='pinyinReveal';el.className='pinyin';el.textContent=(view==='word'?r.wordPinyin:r.phrasePinyin)||'병음 정보 없음';$('cardContent').append(el)}}}
-  else{$('cardContent').innerHTML=`<div class="back-list">${backFields().map(k=>`<div class="back-item"><div class="back-key">${labels[k]}</div><div class="back-value ${['word','script'].includes(k)?'chinese':''}">${esc(r[k]||'—')}</div></div>`).join('')}</div><div class="video-title">${esc(r.videoTitle||'')}</div>`}
-  $('prevBtn').disabled=history.length===0;$('pauseBtn').disabled=false;syncButtonLabels();updateNextPreview();renderLists()
+  const r=deck[index];
+  $('counter').textContent=`${index+1} / ${deck.length}`;
+  $('progressBar').style.width=`${index/deck.length*100}%`;
+  const canAudioOrPinyin=(view==='word'||view==='script');
+  $('listenBtn').disabled=!canAudioOrPinyin;
+  $('pinyinBtn').disabled=!canAudioOrPinyin;
+
+  if(!isBack){
+    const key={word:'word',meaning:'meaning',script:'script',translation:'translation'}[view];
+    $('cardContent').innerHTML=`<div class="mainword">${esc(r[key]||'—')}</div>`;
+    $('listenBtn').onclick=e=>{e.stopPropagation();if(canAudioOrPinyin)speak(view==='word'?r.word:r.script)};
+    $('pinyinBtn').onclick=e=>{
+      e.stopPropagation();
+      if(!canAudioOrPinyin)return;
+      let el=$('pinyinReveal');
+      if(el){el.remove();return}
+      el=document.createElement('div');
+      el.id='pinyinReveal';
+      el.className='pinyin';
+      el.textContent=(view==='word'?r.wordPinyin:r.phrasePinyin)||'병음 정보 없음';
+      $('cardContent').append(el);
+    };
+  }else{
+    $('listenBtn').disabled=false;
+    $('pinyinBtn').disabled=true;
+    $('listenBtn').onclick=e=>{e.stopPropagation();speak(view==='script'||view==='translation'?r.script:r.word)};
+    $('cardContent').innerHTML=`<div class="back-list">${backFields().map(k=>`<div class="back-item"><div class="back-key">${labels[k]}</div><div class="back-value ${['word','script'].includes(k)?'chinese':''}">${esc(r[k]||'—')}</div></div>`).join('')}</div><div class="video-title">${esc(r.videoTitle||'')}</div>`;
+  }
+  $('prevBtn').disabled=history.length===0;
+  $('pauseBtn').disabled=false;
+  syncButtonLabels();
+  updateNextPreview();
+  renderLists();
+  saveProg('quiz');
 }
 function speak(t){if(!t)return;if(!('speechSynthesis'in window)){alert('이 브라우저에서는 음성 재생을 지원하지 않습니다.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=.82;speechSynthesis.speak(u)}
 function flip(){if(paused||animating||!$('pauseModal').classList.contains('hidden'))return;isBack=!isBack;render(true)}
 $('flashcard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}}
+
 window.addEventListener('keydown',e=>{
   if($('quizPanel').classList.contains('hidden'))return;
   if(paused||animating)return;
-  if(!$('pauseModal').classList.contains('hidden')||!$('reviewModal').classList.contains('hidden')||!$('faceSettingsModal').classList.contains('hidden'))return;
+  if(document.querySelector('.modal-backdrop:not(.hidden)'))return;
   const tag=(e.target&&e.target.tagName||'').toLowerCase();
   if(tag==='input'||tag==='textarea'||tag==='select')return;
   const k=(e.key||'').toLowerCase();
@@ -106,40 +354,61 @@ window.addEventListener('keydown',e=>{
     flip();
   }else if(e.key==='ArrowLeft'){
     e.preventDefault();
-    animateAndClassify('again');
+    animateAndClassify('meaning');
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    animateAndClassify('pinyin');
   }else if(e.key==='ArrowRight'){
     e.preventDefault();
     animateAndClassify('known');
   }else if(!isMobileView()&&(code==='KeyQ'||k==='q'||e.key==='ㅂ'||e.key==='ㅃ')){
     const btn=$('listenBtn');
-    if(btn){e.preventDefault();btn.click();}
+    if(btn&&!btn.disabled){e.preventDefault();btn.click();}
   }else if(!isMobileView()&&(code==='KeyW'||k==='w'||e.key==='ㅈ'||e.key==='ㅉ')){
     const btn=$('pinyinBtn');
-    if(btn){e.preventDefault();btn.click();}
+    if(btn&&!btn.disabled){e.preventDefault();btn.click();}
   }else if(!isMobileView()&&(code==='KeyA'||k==='a'||e.key==='ㅁ')){
     const btn=$('prevBtn');
     if(btn&&!btn.disabled){e.preventDefault();btn.click();}
   }
 },true);
+
 window.addEventListener('keydown',e=>{
   if($('reviewModal').classList.contains('hidden'))return;
   if(e.key===' '||e.code==='Space'){e.preventDefault();e.stopPropagation();reviewBack=!reviewBack;renderReview()}
   else if(e.key==='ArrowLeft'){e.preventDefault();e.stopPropagation();$('reviewPrev').click()}
   else if(e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();$('reviewNext').click()}
 },true);
-function classify(type,instantReset=false){if(paused||animating)return;const item=deck[index];history.push({item,type,index});(type==='known'?known:again).push(item);index++;isBack=false;render(instantReset)}
+
+function classify(type,instantReset=false){
+  if(paused||animating)return;
+  const item=deck[index];
+  history.push({item,type,index});
+  if(type==='known')known.push(item);
+  else if(type==='pinyin')pinyinAgain.push(item);
+  else meaningAgain.push(item);
+  index++;
+  isBack=false;
+  render(instantReset);
+}
+
 function animateAndClassify(type){
   if(paused||animating)return;
   animating=true;
   updateNextPreview();
   const fc=$('flashcard');
-  const dir=type==='known'?1:-1;
   fc.classList.remove('swiping','no-transition');
-  fc.classList.toggle('swipe-left',dir<0);
-  fc.classList.toggle('swipe-right',dir>0);
+  fc.classList.toggle('swipe-left',type==='meaning');
+  fc.classList.toggle('swipe-up',type==='pinyin');
+  fc.classList.toggle('swipe-right',type==='known');
   void fc.offsetWidth;
   requestAnimationFrame(()=>{
-    fc.style.transform=`translateX(${dir*135}%) rotate(${dir*180}deg)`;
+    if(type==='pinyin'){
+      fc.style.transform='translateY(-135%) scale(0.92)';
+    }else{
+      const dir=type==='known'?1:-1;
+      fc.style.transform=`translateX(${dir*135}%) rotate(${dir*180}deg)`;
+    }
     fc.style.opacity='0';
   });
   setTimeout(()=>{
@@ -147,29 +416,61 @@ function animateAndClassify(type){
     classify(type,true);
   },936);
 }
-$('againBtn').onclick=()=>animateAndClassify('again');$('knownBtn').onclick=()=>animateAndClassify('known');
-$('prevBtn').onclick=()=>{if(!history.length||animating)return;const h=history.pop(),arr=h.type==='known'?known:again,p=arr.lastIndexOf(h.item);if(p>=0)arr.splice(p,1);index=h.index;isBack=false;render(true)};
-$('homeBtn').onclick=()=>{if(!window.confirm('정말로 홈 화면으로 돌아가시겠습니까?'))return;rows=[];deck=[];index=0;isBack=false;paused=false;animating=false;known=[];again=[];history=[];order='ordered';view='word';setupTarget='all';reviewItems=[];reviewIndex=0;reviewBack=false;$('fileInput').value='';$('loadMessage').textContent='';$('dataRows').innerHTML='';$('dataStats').innerHTML='';$('orderChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value==='ordered'));$('viewChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value==='word'));$('againList').classList.add('hidden');$('knownList').classList.add('hidden');$('pauseModal').classList.add('hidden');$('reviewModal').classList.add('hidden');$('faceSettingsModal').classList.add('hidden');show('uploadPanel')};
+
+$('meaningAgainBtn').onclick=()=>animateAndClassify('meaning');
+$('pinyinAgainBtn').onclick=()=>animateAndClassify('pinyin');
+$('knownBtn').onclick=()=>animateAndClassify('known');
+
+$('prevBtn').onclick=()=>{
+  if(!history.length||animating)return;
+  const h=history.pop();
+  const arr=h.type==='known'?known:(h.type==='pinyin'?pinyinAgain:meaningAgain);
+  const p=arr.lastIndexOf(h.item);
+  if(p>=0)arr.splice(p,1);
+  index=h.index;
+  isBack=false;
+  render(true);
+};
+
 $('settingsBtn').onclick=()=>{if(paused)return;$('nextViewChoices').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value===view));$('faceSettingsModal').classList.remove('hidden')};
 $('nextViewChoices').onclick=e=>{const b=e.target.closest('button[data-value]');if(!b)return;$('nextViewChoices').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b))};
 $('applyNextView').onclick=()=>{const selected=$('nextViewChoices').querySelector('button.active');if(selected){view=selected.dataset.value;isBack=false;$('faceSettingsModal').classList.add('hidden');render(true)}};
-$('cancelNextView').onclick=()=> $('faceSettingsModal').classList.add('hidden');
-$('pauseBtn').onclick=()=>{paused=true;$('pausedAgainCount').textContent=again.length;$('pauseModal').classList.remove('hidden')};
+$('cancelNextView').onclick=()=>$('faceSettingsModal').classList.add('hidden');
+
+$('pauseBtn').onclick=()=>{if(animating)return;paused=true;$('pausedAgainCount').textContent=getAllAgain().length;$('pauseModal').classList.remove('hidden')};
 $('continueBtn').onclick=$('closePauseBtn').onclick=()=>{$('pauseModal').classList.add('hidden');paused=false};
-$('pauseReviewBtn').onclick=()=>{if(!again.length){alert('아직 재학습 카드가 없습니다.');return}const pool=again.slice();for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}reviewItems=pool.slice(0,5);reviewIndex=0;reviewBack=false;if(document.activeElement)document.activeElement.blur();$('pauseModal').classList.add('hidden');renderReview();$('reviewModal').classList.remove('hidden')};
+$('stopBtn').onclick=()=>{$('pauseModal').classList.add('hidden');$('stopModal').classList.remove('hidden')};
+$('stopNo').onclick=()=>{$('stopModal').classList.add('hidden');paused=false};
+$('stopYes').onclick=()=>{$('stopModal').classList.add('hidden');paused=false;resultAbandoned=true;saveProg('quiz');showResult()};
+
+$('pauseReviewBtn').onclick=()=>{
+  const allAgain=getAllAgain();
+  if(!allAgain.length){alert('아직 재학습 카드가 없습니다.');return}
+  const pool=allAgain.slice();
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  reviewItems=pool.slice(0,5);reviewIndex=0;reviewBack=false;
+  if(document.activeElement)document.activeElement.blur();
+  $('pauseModal').classList.add('hidden');renderReview();$('reviewModal').classList.remove('hidden');
+};
 $('exitReviewBtn').onclick=()=>{if(document.activeElement)document.activeElement.blur();$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')};
-$('reviewCard').onclick=()=>{reviewBack=!reviewBack;renderReview()};$('reviewPrev').onclick=()=>{reviewIndex=Math.max(0,reviewIndex-1);reviewBack=false;renderReview()};
+$('reviewCard').onclick=()=>{reviewBack=!reviewBack;renderReview()};
+$('reviewPrev').onclick=()=>{reviewIndex=Math.max(0,reviewIndex-1);reviewBack=false;renderReview()};
 $('reviewNext').onclick=()=>{if(reviewIndex<reviewItems.length-1){reviewIndex++;reviewBack=false;renderReview()}else{if(document.activeElement)document.activeElement.blur();$('reviewModal').classList.add('hidden');$('pauseModal').classList.remove('hidden')}};
 function renderReview(){const r=reviewItems[reviewIndex];$('reviewCounter').textContent=`${reviewIndex+1} / ${reviewItems.length} · 카드를 누르거나 스페이스 바를 누르면 뒷면이 보여요.`;$('reviewCard').innerHTML=reviewBack?`<div class="ko">${esc(r.meaning||'—')}</div><div class="cn" style="font-size:19px;color:#777;font-weight:500">${esc(r.wordPinyin||'병음 정보 없음')}</div>`:`<div class="cn">${esc(r.word||'—')}</div><div class="sub">카드를 눌러 뜻 보기</div>`;$('reviewPrev').disabled=reviewIndex===0;$('reviewNext').textContent=reviewIndex===reviewItems.length-1?'완료':'다음'}
-$('againListToggle').onclick=()=>$('againList').classList.toggle('hidden');$('knownListToggle').onclick=()=>$('knownList').classList.toggle('hidden');
 
-let sx=0,sy=0,swiping=false,moved=false;
+$('meaningAgainListToggle').onclick=()=>$('meaningAgainList').classList.toggle('hidden');
+$('pinyinAgainListToggle').onclick=()=>$('pinyinAgainList').classList.toggle('hidden');
+$('knownListToggle').onclick=()=>$('knownList').classList.toggle('hidden');
+
+/* ---------- 터치 스와이프 (좌: 단어 재학습 / 상: 성조 재학습 / 우: 아는 단어) ---------- */
+let sx=0,sy=0,swiping=false,moved=false,swipeAxis=null;
 function resetSwipeVisual(instant=false){
   swiping=false;
+  swipeAxis=null;
   const fc=$('flashcard');
   if(!fc)return;
   if(instant)fc.classList.add('no-transition');
-  fc.classList.remove('swiping','swipe-left','swipe-right');
+  fc.classList.remove('swiping','swipe-left','swipe-up','swipe-right');
   fc.style.transform='';
   fc.style.opacity='';
   if(instant){
@@ -187,27 +488,49 @@ $('flashcard').ontouchstart=e=>{
   sy=e.changedTouches[0].clientY;
   swiping=true;
   moved=false;
+  swipeAxis=null;
   $('flashcard').classList.add('swiping');
 };
 $('flashcard').ontouchmove=e=>{
   if(!swiping||paused||animating)return;
-  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
-  if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)){
+  const dx=e.changedTouches[0].clientX-sx;
+  const dy=e.changedTouches[0].clientY-sy;
+  if(!swipeAxis&&(Math.abs(dx)>10||Math.abs(dy)>10)){
+    if(dy<-10&&Math.abs(dy)>Math.abs(dx)){
+      swipeAxis='up';
+    }else if(Math.abs(dx)>=Math.abs(dy)){
+      swipeAxis='horizontal';
+    }
+  }
+  const fc=$('flashcard');
+  if(swipeAxis==='up'&&dy<0){
+    e.preventDefault();
     moved=true;
-    const fc=$('flashcard');
+    fc.style.transform=`translateY(${dy*0.85}px)`;
+    fc.classList.add('swipe-up');
+    fc.classList.remove('swipe-left','swipe-right');
+  }else if(swipeAxis==='horizontal'){
+    e.preventDefault();
+    moved=true;
     const ratio=Math.max(-1,Math.min(1,dx/110));
     fc.style.transform=`translateX(${dx*0.85}px) rotate(${ratio*32}deg)`;
     fc.classList.toggle('swipe-left',dx<0);
     fc.classList.toggle('swipe-right',dx>0);
+    fc.classList.remove('swipe-up');
   }
 };
 $('flashcard').ontouchend=e=>{
   if(!swiping)return;
-  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
-  const shouldClassify=Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy)*1.1&&!paused&&!animating;
+  const dx=e.changedTouches[0].clientX-sx;
+  const dy=e.changedTouches[0].clientY-sy;
+  const isUpSwipe=(swipeAxis==='up'||(dy<-36&&Math.abs(dy)>Math.abs(dx)*1.1))&&dy<-36;
+  const isHorizSwipe=(swipeAxis==='horizontal'||(Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy)*1.1))&&Math.abs(dx)>36;
   swiping=false;
-  if(shouldClassify){
-    animateAndClassify(dx<0?'again':'known');
+  swipeAxis=null;
+  if(!paused&&!animating&&isUpSwipe){
+    animateAndClassify('pinyin');
+  }else if(!paused&&!animating&&isHorizSwipe){
+    animateAndClassify(dx<0?'meaning':'known');
   }else{
     resetSwipeVisual(false);
   }
@@ -215,7 +538,152 @@ $('flashcard').ontouchend=e=>{
 };
 $('flashcard').ontouchcancel=()=>{resetSwipeVisual(false);moved=false;};
 
-function finish(){show('resultPanel');const total=known.length+again.length;$('resultPercent').textContent=(total?known.length/total*100:0).toFixed(1)+'%';$('resultCount').textContent=`${known.length} / ${total}개를 아는 단어로 분류했어요.`;$('knownCount').textContent=known.length+'개';$('againCount').textContent=again.length+'개';$('reviewBtn').disabled=!again.length}
-$('reviewBtn').onclick=()=>openSetup('again');$('restartBtn').onclick=()=>openSetup('all');syncButtonLabels();show('uploadPanel');
+function showResult(){
+  show('resultPanel');
+  $('resultPanel').classList.toggle('abandon-theme',resultAbandoned);
+  $('resultStep').textContent=resultAbandoned?'SESSION PAUSED':'SESSION COMPLETE';
+  $('resultHeading').textContent=resultAbandoned?'지금까지의 학습 결과':'오늘의 학습 결과';
+  const k=known.length;
+  const mLen=meaningAgain.length;
+  const pLen=pinyinAgain.length;
+  const a=mLen+pLen;
+  const total=k+a;
+  const un=Math.max(0,deck.length-total);
+  const rate=total?k/total*100:0;
+  $('resultPercent').textContent=rate.toFixed(1)+'%';
+  const celebrate=!resultAbandoned&&rate>=70;
+  $('fireworkLeft').classList.toggle('hidden',!celebrate);
+  $('fireworkRight').classList.toggle('hidden',!celebrate);
+  $('resultCount').textContent=`${k} / ${total}개를 아는 단어로 분류했어요.`;
+  $('knownCount').textContent=k+'개';
+  $('againCount').textContent=`${a}개 (단어 ${mLen} · 성조 ${pLen})`;
+  $('unlearnedCount').textContent=un+'개';
+  $('reviewMeaningBtn').disabled=!mLen;
+  $('reviewPinyinBtn').disabled=!pLen;
+  $('reviewAllBtn').disabled=!a;
+}
+function finish(){resultAbandoned=false;saveProg('done');showResult()}
+$('reviewMeaningBtn').onclick=()=>openSetup('meaning');
+$('reviewPinyinBtn').onclick=()=>openSetup('pinyin');
+$('reviewAllBtn').onclick=()=>openSetup('againAll');
+$('resultHomeBtn').onclick=goHome;
+
+syncButtonLabels();show('uploadPanel');renderHomeReviewCounts();
+(()=>{const act=jget('active',null);if(!act||!sessions.some(s=>s.id===act))return;const p=jget('prog_'+act,null);if(p&&p.mode==='quiz'&&(p.index||0)>0&&loadSession(act))showResume()})();
+
+let homeReviewItems=[],homeReviewIndex=0,homeReviewBack=false;
+
+function collectAllSavedAgain(){
+  const mMap=new Map(), pMap=new Map();
+  sessions.forEach(s=>{
+    const rData=jget('rows_'+s.id,null);
+    if(!Array.isArray(rData))return;
+    const keys=['prog_'+s.id,'reviewprog_'+s.id];
+    keys.forEach(k=>{
+      const prog=jget(k,null);
+      if(!prog)return;
+      const knownSet=new Set(Array.isArray(prog.known)?prog.known:[]);
+      const mList=Array.isArray(prog.again)?prog.again:[];
+      const pList=Array.isArray(prog.pinyinAgain)?prog.pinyinAgain:[];
+      mList.forEach(idx=>{
+        if(knownSet.has(idx))return;
+        const item=rData[idx];
+        if(item){
+          const uid=s.id+'::'+idx;
+          if(!mMap.has(uid))mMap.set(uid,{word:item.word,meaning:item.meaning,wordPinyin:item.wordPinyin});
+        }
+      });
+      pList.forEach(idx=>{
+        if(knownSet.has(idx))return;
+        const item=rData[idx];
+        if(item){
+          const uid=s.id+'::'+idx;
+          if(!pMap.has(uid))pMap.set(uid,{word:item.word,meaning:item.meaning,wordPinyin:item.wordPinyin});
+        }
+      });
+    });
+  });
+  // 현재 진행 중인 메모리 상태(curId가 있든 없든)도 반영
+  const meaningArr=Array.from(mMap.values());
+  const pinyinArr=Array.from(pMap.values());
+  const allMap=new Map();
+  meaningArr.forEach((it,i)=>allMap.set('m_'+i+'_'+(it.word||'')+'_'+(it.meaning||''),it));
+  pinyinArr.forEach((it,i)=>allMap.set('p_'+i+'_'+(it.word||'')+'_'+(it.meaning||''),it));
+  return {all:Array.from(allMap.values()),meaning:meaningArr,pinyin:pinyinArr};
+}
+
+function shuffleArr(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function renderHomeReviewCounts(){
+  const c=collectAllSavedAgain();
+  if($('homeAllCount'))$('homeAllCount').textContent=c.all.length;
+  if($('homeMeaningCount'))$('homeMeaningCount').textContent=c.meaning.length;
+  if($('homePinyinCount'))$('homePinyinCount').textContent=c.pinyin.length;
+  if($('homeReviewAllBtn'))$('homeReviewAllBtn').disabled=!c.all.length;
+  if($('homeReviewMeaningBtn'))$('homeReviewMeaningBtn').disabled=!c.meaning.length;
+  if($('homeReviewPinyinBtn'))$('homeReviewPinyinBtn').disabled=!c.pinyin.length;
+}
+
+function openHomeReview(mode){
+  const c=collectAllSavedAgain();
+  let pool=[],title='';
+  if(mode==='all'){pool=c.all;title='전체 재학습';}
+  else if(mode==='meaning'){pool=c.meaning;title='단어 재학습';}
+  else{pool=c.pinyin;title='성조 재학습';}
+  if(!pool.length){alert('복습할 단어가 없어요.');return;}
+  homeReviewItems=shuffleArr(pool);
+  homeReviewIndex=0;
+  homeReviewBack=false;
+  $('homeReviewTitle').textContent=title+' (랜덤)';
+  renderHomeReview();
+  $('homeReviewModal').classList.remove('hidden');
+}
+
+function renderHomeReview(){
+  const r=homeReviewItems[homeReviewIndex];
+  $('homeReviewCounter').textContent=`${homeReviewIndex+1} / ${homeReviewItems.length} · 카드 터치 또는 스페이스바로 앞·뒷면 전환`;
+  $('homeReviewCard').innerHTML=homeReviewBack
+    ?`<div class="ko">${esc(r.meaning||'—')}</div><div class="cn" style="font-size:19px;color:#777;font-weight:500">${esc(r.wordPinyin||'병음 정보 없음')}</div>`
+    :`<div class="cn">${esc(r.word||'—')}</div><div class="sub">앞면: 중국어 단어</div>`;
+  $('homeReviewPrev').disabled=homeReviewIndex===0;
+  $('homeReviewNext').textContent=homeReviewIndex===homeReviewItems.length-1?'완료':'다음';
+}
+
+$('homeReviewAllBtn').onclick=()=>openHomeReview('all');
+$('homeReviewMeaningBtn').onclick=()=>openHomeReview('meaning');
+$('homeReviewPinyinBtn').onclick=()=>openHomeReview('pinyin');
+$('exitHomeReviewBtn').onclick=()=>$('homeReviewModal').classList.add('hidden');
+$('homeReviewModal').onclick=e=>{if(e.target===$('homeReviewModal'))$('homeReviewModal').classList.add('hidden')};
+$('homeReviewCard').onclick=()=>{homeReviewBack=!homeReviewBack;renderHomeReview()};
+$('homeReviewPrev').onclick=()=>{homeReviewIndex=Math.max(0,homeReviewIndex-1);homeReviewBack=false;renderHomeReview()};
+$('homeReviewNext').onclick=()=>{
+  if(homeReviewIndex<homeReviewItems.length-1){homeReviewIndex++;homeReviewBack=false;renderHomeReview()}
+  else{$('homeReviewModal').classList.add('hidden')}
+};
+
+window.addEventListener('keydown',e=>{
+  if(!$('homeReviewModal').classList.contains('hidden')){
+    if(e.key===' '||e.code==='Space'){e.preventDefault();e.stopPropagation();homeReviewBack=!homeReviewBack;renderHomeReview()}
+    else if(e.key==='ArrowLeft'){e.preventDefault();e.stopPropagation();$('homeReviewPrev').click()}
+    else if(e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();$('homeReviewNext').click()}
+    else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();$('homeReviewModal').classList.add('hidden')}
+    return;
+  }
+  if(!$('homeConfirmModal').classList.contains('hidden')){
+    if(e.key==='Enter'){
+      e.preventDefault();
+      e.stopPropagation();
+      $('homeYesBtn').click();
+    }
+  }
+},true);
+
 })();
 </script></body></html>
